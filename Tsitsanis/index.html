@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-aframe/0.3.9/zappar-aframe.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+
+    <script src="./assets/js/aframe-rounded-component.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
+    <title>Start</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal.fade .modal-dialog {
+            -webkit-transition: -webkit-transform 0.3s ease-out;
+            -moz-transition: -moz-transform 0.3s ease-out;
+            -o-transition: -o-transform 0.3s ease-out;
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal-dialog iframe {
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+
+    <!-- AFrame Components -->
+    <script>
+        // State Machine
+        AFRAME.registerState({
+            initialState: {
+                step1: false,
+                step2: false,
+                step3: false,
+                step4: false,
+                step5: false,
+                step6: false,
+                step7: false,
+                step8: false,
+                step9: false,
+            },
+
+            handlers: {
+
+                step1: (state) => {
+                    if (!state.step1) {
+                        // document.querySelector("#step").emit("scaleDown");
+                        // document.querySelector("#map").emit("scaleDown");
+
+                    }
+                },
+
+                step2: (state) => {
+                    if (!state.step2) {
+                        state.step2 = true;
+                        document
+                            .querySelector("#step1text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step1btn")
+                            .setAttribute("visible", false);
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step1text")
+                                .setAttribute("visible", false);
+                        }, 800);
+                        document
+                            .querySelector("#step2text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step2text").emit("setup");
+                        document.querySelector("#step2btn").setAttribute("visible", true);
+                    }
+                },
+
+                step3: (state) => {
+                    if (!state.step3) {
+                        state.step3 = true;
+                        document
+                            .querySelector("#step2text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step2btn")
+                            .setAttribute("visible", false);
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step2text")
+                                .setAttribute("visible", false);
+                        }, 800);
+                        document
+                            .querySelector("#step3text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step3text").emit("setup");
+                        document.querySelector("#step3btn").setAttribute("visible", true);
+                    }
+                },
+
+                step4: (state) => {
+                    if (!state.step4) {
+                        state.step4 = true;
+                        document
+                            .querySelector("#step3text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step3btn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step3text")
+                                .setAttribute("visible", false);
+                        }, 800);
+                        document.querySelector("#target").setAttribute("zappar-image", "enabled", true);
+                    }
+                },
+
+                step5: (state) => {
+                    if (!state.step5) {
+                        state.step5 = true;
+                        document
+                            .querySelector("#step5text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step5text").emit("setup");
+                        document.querySelector("#step5btn").emit("scaleUp");
+                    }
+                },
+
+                step6: (state) => {
+                    if (!state.step6) {
+                        state.step6 = true;
+                        // NOOR
+                        // add the event to trigger photo app then redirect to
+                        window.location.replace("2.html");
+
+                    }
+                },
+            },
+        });
+
+        // Component to control the visibility of AR content
+        AFRAME.registerComponent("visibility-step", {
+            schema: {
+                step: {
+                    type: "string"
+                },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.step;
+                el.sceneEl.addEventListener("zappar-visible", () =>
+                    AFRAME.scenes[0].emit(evt, null, false)
+                );
+            },
+        });
+
+        // Component to trigger next step on click
+        AFRAME.registerComponent("launch-step", {
+            schema: {
+                message: {
+                    type: "string"
+                },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                el.addEventListener("click", function () {
+                    el.sceneEl.emit(evt, null, false);
+                });
+            },
+        });
+    </script>
+</head>
+
+<body>
+    <a-scene vr-mode-ui="enabled: false" renderer="antialias: true; precision: high">
+        <!-- Ask user for camera permissions -->
+        <a-entity zappar-permissions-ui id="permissions"></a-entity>
+        <!-- Browser Compatibility -->
+        <a-entity zappar-compatibility-ui id="compatibility"></a-entity>
+
+        <!-- Assets -->
+        <a-assets>
+            <!-- Image Target -->
+            <a-asset-item id="anchor-1" src="./assets/anchors/1a.zpt" />
+
+            <!-- Images -->
+            <img id="bgImg" src="assets/img/1_es.png" />
+
+            <!-- Video -->
+
+            <!-- Audio -->
+
+            <!-- 3D -->
+        </a-assets>
+
+        <a-camera zappar-camera cursor="rayOrigin: mouse; fuse: false;" raycaster="objects: [raycastable]">
+            <!-- Text 1 -->
+            <a-rounded id="step1text" position="0 0.6 -2.5" width="1.3" height="1.4" radius="0.05" visible="true"
+                animation__setup="property: position; to: 0 0.6 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.6 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;"
+                material="shader: flat; src: #bgImg;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Γειά χαρά! Καλωσόρισες στο παιχνίδι του Μουσείου Τσιτσάνη με τη χρήση επαυξημένης πραγματικότητας.\n\nΠαίζοντας, θα ανακαλύψεις κρυμμένες πληροφορίες και θα μάθεις καινούργια πράγματα.; color: #000000; align: left; wrapCount: 27; lineHeight: 70; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.44" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+            <!-- Button 1 -->
+            <a-entity id="step1btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Συνέχεια; color: #000000; align: center; wrapCount: 10; lineHeight: 40; width:0.5;"
+                position="0 -2 -5" scale="2 2 2" bind-toggle__raycastable="!step2" launch-step="message: step2"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: start; easing: easeOutElastic; delay: 2000;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: linear;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Text 2 -->
+            <a-rounded id="step2text" position="1.5 0.6 -2.5" width="1.3" height="1.4" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.6 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.6 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Είμαι ο Βασίλης Τσιτσάνης και θα σε συνοδεύσω σε αυτήν την όμορφη εμπειρία. Να έχεις πάντα στο μυαλό σου, ότι για να προχωράς από τη μια αποστολή στην άλλη, θα πρέπει να σαρώνεις τις φωτογραφίες/ εικόνες με το πολύχρωμο περίγραμμα, με τη σειρά που θα σου ζητείται.; color: #000000; align: left; wrapCount: 27; lineHeight: 70; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.44" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+            <!-- Button 2 -->
+            <a-entity id="step2btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Συνέχεια; color: #000000; align: center; wrapCount: 10; lineHeight: 40; width:0.5;"
+                position="0 -2 -5" scale="2 2 2" bind-toggle__raycastable="!step3" launch-step="message: step3"
+                visible="false"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 100; startEvents: scaleUp; easing: easeOutElastic; delay: 2000;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Text 3 -->
+            <a-rounded id="step3text" position="1.5 0.6 -2.5" width="1.3" height="1.4" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.6 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.6 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Σου αρέσει η μουσική. Εμένα πάρα πολύ. \nΈλα να ανακαλύψουμε μαζί το ρεμπέτικο τραγούδι που τόσο αγαπώ. Βρες το μουσικό κλειδί που βρίσκεται στην αίθουσα με τους δίσκους 78, 45 και 33 στροφών και σάρωσε την εικόνα με τη συσκευή σου.; color: #000000; align: left; wrapCount: 27; lineHeight: 70; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.44" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+            <!-- Button 3 -->
+            <a-entity id="step3btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff;"
+                text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Συνέχεια; color: #000000; align: center; wrapCount: 10; lineHeight: 40; width:0.5;"
+                position="0 -2 -5" scale="2 2 2" bind-toggle__raycastable="!step4" launch-step="message: step4"
+                visible="false"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 100; startEvents: scaleUp; easing: easeOutElastic; delay: 2000;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Text 5 -->
+            <a-rounded id="step5text" position="1.5 0.6 -2.5" width="1.3" height="1.4" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.6 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.6 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Μπράβο! Μόλις έφτασες στην πρώτη στάση. Το ήξερες ότι κάποτε για να ακούσουμε τραγούδια χρησιμοποιούσαμε δίσκους βινυλίου. Ξέρω, ξέρω, σήμερα χρησιμοποιείς ψηφιακές συσκευές. Ρίξε μια ματιά στους δίσκους και βγάλε φωτογραφία τον δίσκο με τον τίτλο που σε ενδιαφέρει.; color: #000000; align: left; wrapCount: 27; lineHeight: 70; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.44" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+            <!-- Button 5 -->
+            <a-entity id="step5btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff;"
+                text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Συνέχεια; color: #000000; align: center; wrapCount: 10; lineHeight: 40; width:0.5;"
+                position="0 -2 -5" scale="0 0 0" bind-toggle__raycastable="!step6" launch-step="message: step6"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 800;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+        </a-camera>
+
+        <!-- SET UP OUR EXPERIENCE AS IMAGE TRACKING & GIVE IT AN IMAGE TO TRACK -->
+        <a-entity id="target" zappar-image="target: #anchor-1; enabled: false;" visibility-step="step: step5">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+        </a-entity>
+
+    </a-scene>
+
+    <!-- Modal Krems -->
+    <div class="modal fade" id="intro-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mona Project</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row gy-3">
+                            <img src="assets/img/mona_intro.png" class="img-fluid" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Συνέχεια
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+        </script>
+
+    <script type="text/javascript">
+        (function () {
+            var myModal = new bootstrap.Modal(
+                document.getElementById("intro-modal"),
+                {}
+            );
+            myModal.toggle();
+        })();
+    </script>
+</body>
+
+</html>

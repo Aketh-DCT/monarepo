@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-aframe/0.3.9/zappar-aframe.js"></script>
+    <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="./assets/js/aframe-rounded-component.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
+    <title>Contestazione</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal.fade .modal-dialog {
+            -webkit-transition: -webkit-transform 0.3s ease-out;
+            -moz-transition: -moz-transform 0.3s ease-out;
+            -o-transition: -o-transform 0.3s ease-out;
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal-dialog iframe {
+            margin: 0 auto;
+            display: block;
+        }
+
+        .btn-primary {
+            background-color: #ed008d;
+        }
+    </style>
+
+    <!-- AFrame Components -->
+    <script>
+        // State Machine
+        AFRAME.registerState({
+            initialState: {
+                step1: false,
+                step2: false,
+                show: false,
+                hide: false,
+                mainUI: true,
+                task1: false,
+                task2: false,
+                task3: false,
+                task4: false,
+                task5: false,
+                task6: false,
+            },
+
+            handlers: {
+                step1: (state) => {
+                    if (!state.step1) {
+                        state.step1 = true;
+                        document
+                            .querySelector("#anchor")
+                            .setAttribute("zappar-image", "enabled", true);
+                        document
+                            .querySelector("#introText")
+                            .emit("slideOut");
+
+                        document
+                            .querySelector("#introBtn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#introText")
+                                .setAttribute("visible", false);
+                        }, 800);
+                    }
+                },
+                show: (state) => {
+                    if (!state.show) {
+                        state.show = true;
+                        document
+                            .querySelector("#step1text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step1btn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step1text")
+                                .setAttribute("visible", false);
+                        }, 800);
+
+                        document
+                            .querySelector("#step2text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step2text").emit("setup");
+                    }
+                },
+                task1: (state) => {
+                    state.task1 = true;
+                },
+                task2: (state) => {
+                    state.task2 = true;
+                },
+                task3: (state) => {
+                    state.task3 = true;
+                },
+                task4: (state) => {
+                    state.task4 = true;
+                },
+                task5: (state) => {
+                    state.task5 = true;
+                },
+                task6: (state) => {
+                    console.log("fine");
+                    state.task6 = true;
+                    window.location.replace("./fine.html");
+                },
+            },
+        });
+
+        // Component to control the visibility of AR content
+        AFRAME.registerComponent("visibility-changer", {
+            init: function () {
+                this.el.setAttribute("visible", false);
+                this.el.parentElement.addEventListener(
+                    "zappar-visible",
+                    () => {
+                        this.el.setAttribute("visible", true);
+                        this.el.setAttribute("raycastable");
+                        this.el.emit("scaleUp");
+                    }
+                );
+                this.el.parentElement.addEventListener(
+                    "zappar-notvisible",
+                    () => {
+                        this.el.emit("scaleDown");
+                        this.el.removeAttribute("raycastable");
+                        this.el.setAttribute("visible", false);
+                    }
+                );
+            },
+            remove: function () {
+                this.el.setAttribute("visible", false);
+            },
+        });
+
+        AFRAME.registerComponent("launch-challenge", {
+            schema: {
+                message: {
+                    type: "string"
+                },
+                modal: {
+                    type: "string"
+                },
+                task: {
+                    type: "string"
+                },
+            },
+            init: function () {
+                var el = this.el;
+                var evt = this.data.message;
+                var task = this.data.task;
+                var targetModal = new bootstrap.Modal(
+                    document.getElementById(this.data.modal), {}
+                );
+                el.addEventListener("click", function () {
+                    el.sceneEl.emit(evt, null, true);
+                    targetModal.toggle();
+                    AFRAME.scenes[0].emit(task, null, false);
+
+                });
+            },
+        });
+
+        AFRAME.registerComponent("visibility-step", {
+            schema: {
+                step: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.step;
+                el.addEventListener("zappar-visible", () => {
+                    AFRAME.scenes[0].emit(evt, null, false);
+                });
+            },
+        });
+
+        // Component to trigger next step on click
+        AFRAME.registerComponent("launch-step", {
+            schema: {
+                message: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                el.addEventListener("click", function () {
+                    el.sceneEl.emit(evt, null, true);
+                });
+            },
+        });
+    </script>
+</head>
+
+<body>
+    <a-scene renderer="antialias: true; colorManagement: true;" vr-mode-ui="enabled: false">
+        <!-- Ask user for camera permissions -->
+        <a-entity zappar-permissions-ui id="permissions"></a-entity>
+        <!-- Browser Compatibility -->
+        <a-entity zappar-compatibility-ui id="compatibility"></a-entity>
+        <!-- Assets -->
+        <a-assets>
+            <!-- Image Target -->
+            <a-asset-item id="anchor-1" src="./assets/anchors/6.3_abbateConsiglio.zpt" />
+
+            <!-- Images -->
+            <img id="discoverImg" src="./assets/img/A_discover.png" />
+            <img id="listenImg" src="./assets/img/B_listen.png" />
+            <img id="knowImg" src="./assets/img/C_know.png" />
+            <img id="writeImg" src="./assets/img/D_write.png" />
+            <img id="ideaImg" src="./assets/img/E_idea.png" />
+            <img id="exhibitionImg" src="./assets/img/F_exhibition.png" />
+
+            <!-- Animation Mixins -->
+            <a-mixin id="scaleDownAnim"
+                animation="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInCirc;"></a-mixin>
+            <a-mixin id="scaleUpAnim"
+                animation="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeInElastic;">
+            </a-mixin>
+
+            <!-- Color Mixins -->
+            <a-mixin id="mainClr" material="color: #ed008d"></a-mixin>
+            <a-mixin id="secondClr" material="color: red"></a-mixin>
+            <a-mixin id="accentClr" material="color: red"></a-mixin>
+            <a-mixin id="bgClr" material="color: white"></a-mixin>
+
+            <!-- Shape Mixins -->
+        </a-assets>
+
+        <a-entity camera zappar-camera cursor="rayOrigin: mouse; fuse: false;" raycaster="objects: [raycastable]">
+            <!-- Intro Text -->
+            <a-rounded id="introText" position="0 0.4 -2.5" width="1.3" height="1.8" radius="0.05" visible="true"
+                animation__setup="property: position; to: 0 0.4 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.4 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/Avenir-Light-msdf.json; fontImage: ./fonts/Avenir-Light.png; negate: false; value: Hai scelto una parola molto controversa! \nSei forse un provocatore? Pensi che nel mondo ci siano cose ingiuste e sei disposto a lottare per cambiarle? \n\nProva a cercare un’opera “fantasma” che parla anche di questo. Nel museo ci sono delle piccole polaroid. Troverai un indizio per trovare la polaroid/opera giusta per il tuo tema. Punta il cellulare sull’immagine, è la tua? Se sì avventurati alla scoperta del lavoro fantasma. Altrimenti: ritenta!; color: #000000; align: left; wrapCount: 30; lineHeight: 50; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.84" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+
+            <!-- Intro Button -->
+            <a-entity id="introBtn" geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Iniziamo...; color: #000000; align: center; wrapCount: 12; lineHeight: 50; width:0.8;"
+                position="0 -2 -5" scale="1 1 1" launch-step="message: step1;" bind-toggle__raycastable="!step1"
+                animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.53; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+        </a-entity>
+
+        <!-- duchamp anchor -->
+        <a-entity id="anchor" zappar-image="target: #anchor-1; enabled: false;">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+            <a-entity id="content" bind-toggle__visibility-changer="step1">
+                <!-- PLACE 3D OBJECTS HERE TO TRACK FROM THE CENTER OF THE IMAGE -->
+                <a-entity class="btns" geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                    position="0 1.1 0" scale="0.6 0.6 0.6" launch-challenge="modal: modal-1; task: task1;"
+                    bind="visible: !task5" bind-toggle__raycastable="step1 && !task5"
+                    animation__scaleUp="property: scale; to: 0.6 0.6 0.6; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                    animation__scaleDown="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInCirc;">
+                    <a-image src="#discoverImg" position="-0.015 0 0.001" scale="1.05 1.05 1.05"></a-image>
+                    <a-entity geometry="primitive: circle; radius: 0.54; segments: 64;" material="color: #ed008d"
+                        position="0 0 -0.001">
+                    </a-entity>
+                </a-entity>
+
+                <a-entity class="btns" geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                    position="-0.81 0.51 0" scale="0.6 0.6 0.6" launch-challenge="modal: modal-2; task: task2;"
+                    bind-toggle__raycastable="task1 && !task5" bind="visible: task1 && !task5"
+                    animation__scaleUp="property: scale; to: 0.6 0.6 0.6; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                    animation__scaleDown="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInCirc;">
+                    <a-image src="#listenImg" position="0 0.01 0.001" scale="1.05 1.05 1.05"></a-image>
+                    <a-entity geometry="primitive: circle; radius: 0.54; segments: 64;" material="color: #ed008d"
+                        position="0 0 -0.001">
+                    </a-entity>
+                </a-entity>
+
+                <a-entity class="btns" geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                    position="0.81 0.51 0" scale="0.6 0.6 0.6" launch-challenge="modal: modal-3;task: task3;"
+                    bind-toggle__raycastable="task2 && !task5" bind="visible: task2 && !task5"
+                    animation__scaleUp="property: scale; to: 0.6 0.6 0.6; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                    animation__scaleDown="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInCirc;">
+                    <a-image src="#ideaImg" position="0 0 0.001" scale="1 1 1"></a-image>
+                    <a-entity geometry="primitive: circle; radius: 0.54; segments: 64;" material="color: #ed008d"
+                        position="0 0 -0.001">
+                    </a-entity>
+                </a-entity>
+
+                <a-entity class="btns" geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                    position="-0.81 -0.51 0" scale="0.6 0.6 0.6" launch-challenge="modal: modal-4; task: task4;"
+                    bind-toggle__raycastable="task3 && !task5" bind="visible: task3 && !task5"
+                    animation__scaleUp="property: scale; to: 0.6 0.6 0.6; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                    animation__scaleDown="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInCirc;">
+                    <a-image src="#knowImg" position="0 0.011 0.001" scale="1.05 1.05 1.05"></a-image>
+                    <a-entity geometry="primitive: circle; radius: 0.54; segments: 64;" material="color: #ed008d"
+                        position="0 0 -0.001">
+                    </a-entity>
+                </a-entity>
+
+                <a-entity class="btns" geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                    position="0.81 -0.51 0" scale="0.6 0.6 0.6" launch-challenge="modal: modal-5;task: task5;"
+                    bind-toggle__raycastable="task4 && !task5" bind="visible: task4 && !task5"
+                    animation__scaleUp="property: scale; to: 0.6 0.6 0.6; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                    animation__scaleDown="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInCirc;">
+                    <a-image src="#writeImg" position="0 -0.012 0.001" scale="1.05 1.05 1.05"></a-image>
+                    <a-entity geometry="primitive: circle; radius: 0.54; segments: 64;" material="color: #ed008d"
+                        position="0 0 -0.001">
+                    </a-entity>
+                </a-entity>
+
+                <a-entity class="btns" geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                    position="0 -1.1 0" scale="0.6 0.6 0.6" bind-toggle__raycastable="task5" bind="visible: task5"
+                    launch-step="message: task6;"
+                    animation__scaleUp="property: scale; to: 0.6 0.6 0.6; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                    animation__scaleDown="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInCirc;">
+                    <a-image src="#exhibitionImg" position="0 0 0.001" scale="1 1 1"></a-image>
+                    <a-entity geometry="primitive: circle; radius: 0.54; segments: 64;" material="color: #ed008d"
+                        position="0 0 -0.001">
+                    </a-entity>
+                </a-entity>
+            </a-entity>
+        </a-entity>
+    </a-scene>
+
+    <!-- Modal 1 -->
+    <div class="modal fade" id="modal-1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Scoprire</h5>
+                </div>
+                <div class="modal-body">
+                    <div clas="container">
+                        <div class="row gy-3">
+                            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"
+                                data-bs-interval="false">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <img src="./assets/img/abbate/abbate_1.png" class="d-block w-100" alt="...">
+                                    </div>
+                                    <div class="carousel-item">
+                                        <img src="./assets/img/abbate/abbate_2.png" class="d-block w-100" alt="...">
+                                    </div>
+                                    <div class="carousel-item">
+                                        <img src="./assets/img/abbate/abbate_3.png" class="d-block w-100" alt="...">
+                                    </div>
+                                    <div class="carousel-item">
+                                        <img src="./assets/img/abbate/abbate_4.png" class="d-block w-100" alt="...">
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button"
+                                    data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button"
+                                    data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row gy-3">
+                            <p class="text-start">
+                                Titolo mostra: Manifesto (Adalberto Abbate
+                                and Mario Consiglio). 2015 <br /><br />
+                                Titolo Opera: Senza titolo. <br />
+                                Tecnica: stampe fotografiche, legno
+                                <br /><br />
+                                Tema: critica sociale e gli abusi delle
+                                immagini nella civiltà dei media <br />
+                                Slogan: L’immagine è sempre un capro
+                                espiatorio L’intervento di Abate e Consiglio
+                                constava di centinaia di “manifesti”
+                                prodotti scattando fotografia urbane e/o a
+                                immagini già prodotte da altri e rettificate
+                                giustapponendovi frasi o associando in modo
+                                ironico e incongruo altre immagini. L’intero
+                                museo era dunque percorso da questi
+                                manifesti che andavano a costruire un
+                                palinsesto ironico quando non grottesco e
+                                sarcastico delle contraddizione che abitano
+                                i nostri pensieri, pulsioni, politiche…
+                                Sessualità, abusi sociali, abusi di potere,
+                                pura goliardia, appunti di visioni
+                                quotidiane andavano a costruire una
+                                narrazione dell’oggi pervasa di critica e
+                                disincanto. Tutto imbastito e creato
+                                semplicemente attraverso l’uso di quanto
+                                “Manifesto” cioè noto, diffuso, già presente
+                                nel quotidiano di ciascuno per le strade,
+                                nella tv, nelle riviste tra le pieghe di
+                                internet. Ma ancora una volta,
+                                0ricontestualizzate e variate in piccoli
+                                elementi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Torna al Gioco
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2 -->
+    <div class="modal fade" id="modal-2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ascolta</h5>
+                </div>
+                <div class="modal-body">
+                    <div clas="container">
+                        <div class="row gy-3">
+                            <!-- Introductory Video-->
+                            <div class="
+                                        embed-responsive embed-responsive-16by9
+                                    ">
+                                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/kLeQ8hRYTkk"
+                                    frameborder="0" height="100%" width="100%" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Torna al Gioco
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3 -->
+    <div class="modal fade" id="modal-3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Approfondisci</h5>
+                </div>
+                <div class="modal-body">
+                    <div clas="container">
+                        <div class="row gy-3">
+                            <p class="text-start">
+                                Il titolo del lavoro è “Manifesto”.
+                                Scopriamo il significato da dizionario:<br /><br />
+                                <b>manifesto <sup>2</sup> </b><br />
+                                [ma-ni-fè-sto] <b>s.m.</b> <br />
+                                <b>1</b> Foglio stampato di notevoli
+                                dimensioni esposto in pubblico per avvisi o
+                                pubblicità SIN cartellone, locandina: m.
+                                teatrale; affiggere dei m.; poster: una
+                                stanza tappezzata di m. <br />
+                                <b>2</b> Scritto che rende noti i principi
+                                ispiratori e il programma di un movimento
+                                politico, artistico, culturale: i m.
+                                futuristici <br />
+                                <b>3</b> Voce del verbo Manifestare, prima
+                                persona singolare presente
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Torna al Gioco
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4 -->
+    <div class="modal fade" id="modal-4" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Scrivi!</h5>
+                </div>
+                <div class="modal-body">
+                    <div clas="container">
+                        <div class="row gy-3">
+                            <img src="assets/img/map.jpg" class="img-fluid" />
+                            <p class="text-start">
+                                Ora metti insieme tutti gli spunti che hai
+                                avuto da questo lavoro e intorno alla parola
+                                CONTESTAZIONE, crea una macedonia di altre
+                                parole che ti vengono in mente. <br />
+                                Prova a rendere la grafica delle parole
+                                esteticamente accattivante.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Torna al Gioco
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5 -->
+    <div class="modal fade" id="modal-5" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Trasforma</h5>
+                </div>
+                <div class="modal-body">
+                    <div clas="container">
+                        <div class="row gy-3">
+                            <p class="text-start">
+                                Hai visto? <br /><br />
+                                Usando oggetti quotidiani e di uso comune in
+                                un museo, ma attribuendogli un nome diverso
+                                e apportando piccole modifiche, gli artisti
+                                Abbate e Consiglio hanno creato un nuovo
+                                sistema criticando pensieri comuni e
+                                mettendo in dubbio cose certe. I loro
+                                manifesti sono diventati delle metafore
+                                critiche! <br /><br />Prova tu, ora.
+                                <br /><br />Fatti un selfie o usa
+                                un’immagine di quelle che hai scattato delle
+                                opere nella mostra. Poi usando una qualche
+                                app del tuo telefono, modificane delle parti
+                                (disegna un oggetto al posto della testa,
+                                modifica il luogo in cui sei, aggiungi una
+                                parola che associa all’immagine un nuovo
+                                significato...). <br />Cerca così di
+                                raccontare qualcosa di te e della tua
+                                identità! Attento:la tua faccia non dovrà
+                                più essere riconoscibile! Se non vuoi usare
+                                il cellulare. Ci sono a disposizione per te,
+                                carta, penne, pennarelli e giornali per il
+                                collage! <br /><br />SUGGERIMENTO: tra le app possibili noi amiamo usare POLISH che
+                                permette
+                                di scontornare le figure e fondere immagini. La conosci?<br /><br />Hai fatto?! Manda il
+                                tuo lavoro all’operatrice e aspettala al
+                                punto di partenza dove se vorrai, potrai curiosare tra i nostri approfondimenti.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Torna al Gioco
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

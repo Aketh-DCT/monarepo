@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-aframe/0.3.9/zappar-aframe.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="./assets/js/aframe-rounded-component.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
+    <title>Palazzo Lucarini</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal.fade .modal-dialog {
+            -webkit-transition: -webkit-transform 0.3s ease-out;
+            -moz-transition: -moz-transform 0.3s ease-out;
+            -o-transition: -o-transform 0.3s ease-out;
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal-dialog iframe {
+            margin: 0 auto;
+            display: block;
+        }
+
+        .btn-primary {
+            background-color: #ed008d;
+        }
+    </style>
+
+    <!-- AFrame Components -->
+    <script>
+        // State Machine
+        AFRAME.registerState({
+            initialState: {
+                step1: false,
+                step2: false,
+                step3: false,
+                step4: false,
+                step5: false,
+            },
+
+            handlers: {
+                step1: (state) => {
+                    if (!state.step1) {
+                        state.step1 = true;
+                        document
+                            .querySelector("#duchampAncr")
+                            .setAttribute("zappar-image", "enabled", false);
+                        document
+                            .querySelector("#introText")
+                            .emit("slideOut");
+
+                        setTimeout(() => {
+                            document
+                                .querySelector("#introText")
+                                .setAttribute("visible", false);
+                        }, 800);
+
+                        document
+                            .querySelector("#step1text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step1text").emit("setup");
+                        document.querySelector("#step1btn").emit("scaleUp");
+                    }
+                },
+                step2: (state) => {
+                    if (!state.step2) {
+                        state.step2 = true;
+                        document
+                            .querySelector("#step1text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step1btn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step1text")
+                                .setAttribute("visible", false);
+                        }, 800);
+
+                        document
+                            .querySelector("#step2text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step2text").emit("setup");
+                    }
+                },
+
+                step3: (state) => {
+                    if (!state.step3) {
+                        state.step3 = true;
+                        document
+                            .querySelector("#step2text")
+                            .emit("slideOut");
+
+                        document
+                            .querySelector("#step2btn")
+                            .emit("scaleDown");
+
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step2text")
+                                .setAttribute("visible", false);
+                        }, 800);
+
+                        document
+                            .querySelector("#imhereAncr")
+                            .setAttribute("zappar-image", "enabled", true);
+                    }
+                },
+
+                step4: (state) => {
+                    if (!state.step4) {
+                        state.step4 = true;
+                        document
+                            .querySelector("#step3text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step3text").emit("setup");
+                        document.querySelector("#step3btn").emit("scaleUp");
+                    }
+                },
+
+                step5: (state) => {
+                    if (!state.step5) {
+                        state.step5 = true;
+
+                        document
+                            .querySelector("#step3text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step3btn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step3text")
+                                .setAttribute("visible", false);
+                        }, 800);
+
+                        var els =
+                            document.querySelectorAll(".parola-anchor");
+                        for (var i = 0; i < els.length; i++) {
+                            els[i].setAttribute(
+                                "zappar-image",
+                                "enabled",
+                                true
+                            );
+                        }
+                    }
+                },
+
+                option1: (state) => {
+                    window.location.replace("6-1.html");
+                },
+
+                option2: (state) => {
+                    window.location.replace("6-2.html");
+                },
+
+                option3: (state) => {
+                    window.location.replace("6-3.html");
+                },
+
+                option4: (state) => {
+                    window.location.replace("6-4.html");
+                },
+            },
+        });
+
+        // Component to control the visibility of AR content
+        AFRAME.registerComponent("visibility-changer", {
+            init: function () {
+                this.el.setAttribute("visible", false);
+                this.el.parentElement.addEventListener(
+                    "zappar-visible",
+                    () => {
+                        this.el.setAttribute("visible", true);
+                        this.el.setAttribute("raycastable");
+                        this.el.emit("scaleUp");
+                    }
+                );
+                this.el.parentElement.addEventListener(
+                    "zappar-notvisible",
+                    () => {
+                        this.el.emit("scaleDown");
+                        this.el.removeAttribute("raycastable");
+                        this.el.setAttribute("visible", false);
+                    }
+                );
+            },
+            remove: function () {
+                this.el.setAttribute("visible", false);
+            },
+        });
+
+        // Component to launch modal
+        AFRAME.registerComponent("launch-challenge", {
+            schema: {
+                message: { type: "string" },
+                modal: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                var targetModal = new bootstrap.Modal(
+                    document.getElementById(this.data.modal),
+                    {}
+                );
+                el.addEventListener("click", function () {
+                    el.sceneEl.emit(evt, null, true);
+                    targetModal.toggle();
+                });
+            },
+        });
+
+        AFRAME.registerComponent("visibility-step", {
+            schema: {
+                step: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.step;
+                el.addEventListener("zappar-visible", () => {
+                    AFRAME.scenes[0].emit(evt, null, false);
+                });
+            },
+        });
+
+        // Component to trigger next step on click
+        AFRAME.registerComponent("launch-step", {
+            schema: {
+                message: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                el.addEventListener("click", function () {
+                    el.sceneEl.emit(evt, null, true);
+                });
+            },
+        });
+    </script>
+</head>
+
+<body>
+    <a-scene renderer="antialias: true; colorManagement: true;" vr-mode-ui="enabled: false">
+        <!-- Ask user for camera permissions -->
+        <a-entity zappar-permissions-ui id="permissions"></a-entity>
+        <!-- Browser Compatibility -->
+        <a-entity zappar-compatibility-ui id="compatibility"></a-entity>
+        <!-- Assets -->
+        <a-assets>
+            <!-- Image Target -->
+            <a-asset-item id="anchor-1" src="./assets/anchors/1_duchamp.zpt" />
+            <a-asset-item id="anchor-2" src="./assets/anchors/3_Imhere.zpt" />
+            <a-asset-item id="anchor-3" src="./assets/anchors/4.1_Identità.zpt" />
+            <a-asset-item id="anchor-4" src="./assets/anchors/4.2_Libertà.zpt" />
+            <a-asset-item id="anchor-5" src="./assets/anchors/4.3_contestazione.zpt" />
+            <a-asset-item id="anchor-6" src="./assets/anchors/4.4_CostruireMondi.zpt" />
+
+            <!-- Images -->
+            <img id="duchampImg" src="./assets/img/1_duchamp.jpg" />
+            <img id="hereImg" src="./assets/img/3_Imhere.jpg" />
+            <img id="identitaImg" src="./assets/img/4.1.jpg" />
+            <img id="libertaImg" src="./assets/img/4.2.jpg" />
+            <img id="contestazioneImg" src="./assets/img/4.3.jpg" />
+            <img id="mondiImg" src="./assets/img/4.4.jpg" />
+
+            <!-- Animation Mixins -->
+            <a-mixin id="scaleDownAnim"
+                animation="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInCirc;"></a-mixin>
+            <a-mixin id="scaleUpAnim"
+                animation="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeInElastic;">
+            </a-mixin>
+
+            <!-- Color Mixins -->
+            <a-mixin id="mainClr" material="color: #ed008d"></a-mixin>
+            <a-mixin id="secondClr" material="color: red"></a-mixin>
+            <a-mixin id="accentClr" material="color: red"></a-mixin>
+            <a-mixin id="bgClr" material="color: white"></a-mixin>
+
+            <!-- Shape Mixins -->
+        </a-assets>
+
+        <a-entity camera zappar-camera cursor="rayOrigin: mouse; fuse: false;" raycaster="objects: [raycastable]">
+            <!-- Intro Text -->
+            <a-rounded id="introText" position="0 0.4 -2.5" width="1.3" height="1.8" radius="0.05" visible="true"
+                animation__setup="property: position; to: 0 0.4 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.4 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 -0.72 0"
+                    text="font: ./fonts/Avenir-Light-msdf.json; fontImage: ./fonts/Avenir-Light.png; negate: false; value: Cerca Duchamp sulla linea del tempo e punta il tuo telefono alla sua foto!; color: #000000; align: left; wrapCount: 32; lineHeight: 60; width:1.2;">
+                    <a-image src="#duchampImg" width="1.2" height="1.45" position="0 0.87 0.001" scale="1 1 1">
+                    </a-image>
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.84" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+
+            <!-- Step1 Text -->
+            <a-rounded id="step1text" position="1.5 0.6 -2.5" width="1.3" height="1.4" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.6 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.6 -2.5; dur: 400; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/Avenir-Light-msdf.json; fontImage: ./fonts/Avenir-Light.png; negate: false; value: Benvenuti in un centro d’arte contemporanea! \n\nQui tutto cambia continuamente: mostre, contenuti, temi. Oggi ti proponiamo un viaggio nel tempo. \n\nVedrai la mostra attuale, ma potrai andare a caccia delle tracce virtuali di mostre precedenti e, grazie alla scoperta di qualche trucco della fantasia, potrai diventare l’artista di oggi.; color: #000000; align: left; wrapCount: 32; lineHeight: 50; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.44" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+
+            <!-- Step1 Button -->
+            <a-entity id="step1btn" geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Iniziamo...; color: #000000; align: center; wrapCount: 12; lineHeight: 50; width:0.8;"
+                position="0 -2 -5" scale="0 0 0" launch-step="message: step2;" bind-toggle__raycastable="step1"
+                animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.53; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Step2 Text -->
+            <a-rounded id="step2text" position="1.5 0.4 -2.5" width="1.3" height="1.8" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.4 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.4 -2.5; dur: 400; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 -0.5 0"
+                    text="font: ./fonts/Avenir-Light-msdf.json; fontImage: ./fonts/Avenir-Light.png; negate: false; value: Fai un giro della mostra e fotografa le cose che ti colpiscono di più. Attento, hai solo 6 minuti per farlo e 11 sale da scoprire. Non chiederti i perché e cosa. Lasciati solo colpire dalle cose e fotografa. Opere intere o dettagli. 
+                        Poi torna qui da me e segui le istruzioni.; color: #000000; align: left; wrapCount: 32; lineHeight: 50; width:1.2;">
+                    <a-image src="#hereImg" width="1.2" height="1.45" position="0 0.85 0.001" scale="0.7 0.7 0.7">
+                    </a-image>
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.84" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+
+            <!-- Step2 Button -->
+            <!-- Open photo taking app -->
+            <a-entity id="step2btn" geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Ok!; color: #000000; align: center; wrapCount: 12; lineHeight: 50; width:0.8;"
+                position="0 -2 -5" scale="1 1 1" launch-step="message: step3;" bind-toggle__raycastable="step2"
+                bind="visible: step2"
+                animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.53; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Step3 Text -->
+            <a-rounded id="step3text" position="1.5 0.4 -2.5" width="1.3" height="1.8" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.4 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.4 -2.5; dur: 400; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 -0.5 0"
+                    text="font: ./fonts/Avenir-Light-msdf.json; fontImage: ./fonts/Avenir-Light.png; negate: false; value: Attento! Ora ti chiediamo di esplorare delle opere virtuali che nel passato sono state nel nostro museo. Sono opere “fantasma” che potrai vedere solo grazie al tuo cellulare e alla Realtà Aumentata e su cui potrai fare delle attività. \nPer iniziare scegli tra queste parole quella che ti affascina di più.; color: #000000; align: left; wrapCount: 32; lineHeight: 50; width:1.2;">
+                    <a-image src="#identitaImg" width="1.2" height="1.45" position="0.3 1.15 0.001"
+                        scale="0.32 0.32 0.32"></a-image>
+
+                    <a-image src="#libertaImg" width="1.2" height="1.45" position="-0.3 1.15 0.001"
+                        scale="0.32 0.32 0.32"></a-image>
+
+                    <a-image src="#contestazioneImg" width="1.2" height="1.45" position="0.3 0.65 0.001"
+                        scale="0.32 0.32 0.32"></a-image>
+
+                    <a-image src="#mondiImg" width="1.2" height="1.45" position="-0.3 0.65 0.001"
+                        scale="0.32 0.32 0.32"></a-image>
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.84" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+
+            <!-- Step3 Button -->
+            <!-- Open photo taking app -->
+            <a-entity id="step3btn" geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Ok!; color: #000000; align: center; wrapCount: 12; lineHeight: 50; width:0.8;"
+                position="0 -2 -5" scale="0 0 0" launch-step="message: step5;" bind-toggle__raycastable="step4"
+                bind="visible: step4"
+                animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.53; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+        </a-entity>
+
+        <!-- duchamp anchor -->
+        <a-entity id="duchampAncr" zappar-image="target: #anchor-1; enabled: true;" visibility-step="step: step1">
+        </a-entity>
+
+        <!-- I'm here anchor -->
+        <a-entity id="imhereAncr" zappar-image="target: #anchor-2; enabled: false;" visibility-step="step: step4">
+        </a-entity>
+
+        <!-- identità -->
+        <a-entity class="parola-anchor" zappar-image="target: #anchor-3; enabled: false;">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+
+            <a-entity geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Scegli; color: #000000; align: center; wrapCount: 12; lineHeight: 50; width:0.8;"
+                position="0 0 0" scale="0 0 0" launch-step="message: option1;" bind-toggle__visibility-changer="step5"
+                animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.53; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+        </a-entity>
+
+        <!-- identità -->
+        <a-entity class="parola-anchor" zappar-image="target: #anchor-4; enabled: false;">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+
+            <a-entity geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Scegli; color: #000000; align: center; wrapCount: 12; lineHeight: 50; width:0.8;"
+                position="0 0 0" scale="0 0 0" launch-step="message: option2;" bind-toggle__visibility-changer="step5"
+                animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.53; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+        </a-entity>
+
+        <!-- identità -->
+        <a-entity class="parola-anchor" zappar-image="target: #anchor-5; enabled: false;">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+
+            <a-entity geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Scegli; color: #000000; align: center; wrapCount: 12; lineHeight: 50; width:0.8;"
+                position="0 0 0" scale="0 0 0" launch-step="message: option3;" bind-toggle__visibility-changer="step5"
+                animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.53; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+        </a-entity>
+
+        <!-- identità -->
+        <a-entity class="parola-anchor" zappar-image="target: #anchor-6; enabled: false;">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+
+            <a-entity geometry="primitive: circle; radius: 0.5; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Scegli; color: #000000; align: center; wrapCount: 12; lineHeight: 50; width:0.8;"
+                position="0 0 0" scale="0 0 0" launch-step="message: option4;" bind-toggle__visibility-changer="step5"
+                animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400 "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.53; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+        </a-entity>
+    </a-scene>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

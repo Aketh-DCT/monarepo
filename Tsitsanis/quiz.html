@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<style type="text/css">
+		body {
+
+			text-align: center;
+			background-color: white;
+		}
+
+		#question {
+			text-align: center;
+			font-size: 1.2em;
+			font-weight: bold;
+			color: #555;
+			padding: 10px 30px;
+
+		}
+
+		#qcontainer {
+			width: 100%;
+			text-align: center;
+			height: 120px;
+		}
+
+		.answer {
+			width: 100px;
+			height: 100px;
+			padding: 10px 0;
+			background-color: #ddd;
+			color: white;
+			font-weight: bold;
+			border-radius: 5px;
+			display: inline-block;
+			text-align: center;
+			cursor: pointer;
+			margin-right: 5px;
+		}
+
+		.answer img {
+			height: 100px;
+			text-align: center;
+		}
+
+		#result {
+			font-size: 1.1em;
+			color: #8e6040;
+			padding: 10px 30px;
+			display: none;
+		}
+
+		#next {
+			display: none;
+			margin: auto;
+			width: 80px;
+			height: 100px;
+			cursor: pointer;
+		}
+
+		#next img {
+			width: 80px;
+			height: 100px;
+		}
+
+		#correctness {
+			width: 100%;
+			text-align: center;
+			margin-top: 20px;
+			margin-bottom: -10px;
+		}
+
+		#correct {
+			height: 50px;
+			display: none;
+			text-align: center;
+			margin: auto;
+		}
+
+		#wrong {
+			height: 50px;
+			display: none;
+			text-align: center;
+			margin: auto;
+		}
+	</style>
+</head>
+
+<body>
+
+	<h3 id="question">Εκτός από το μπουζούκι, ξέρεις ποιο μουσικό όργανο μου άρεσε πολύ να παίζω όταν ήμουν μικρός;</h3>
+
+	<div id="qcontainer">
+		<div class="answer" id="answer1" answer="false"><img src="resources/piano.png" answer="false"></div>
+		<div class="answer" id="answer2" answer="false"><img src="resources/guitar.png" answer="false"></div>
+		<div class="answer" id="answer3" answer="true"><img src="resources/violin.png" answer="true"></div>
+	</div>
+
+	<div id="correctness"><img id="correct" src="resources/correct.png"><img id="wrong" src="resources/wrong.png"></div>
+	<p id="result">Αν και όλος ο κόσμος γνωρίζει ότι παίζω μπουζούκι, δε γνωρίζει ότι στα πρώτα χρόνια στο γυμνάσιο
+		έμαθα να παίζω βιολί και μάλιστα ήμουν πολύ καλός σε αυτό.</p>
+
+	<div id="next"><img src="resources/mona_nxt_btn.png"></div>
+
+	<script>
+		answer1 = document.getElementById("answer1");
+		answer1.addEventListener("click", btnClick);
+		answer2 = document.getElementById("answer2");
+		answer2.addEventListener("click", btnClick);
+		answer3 = document.getElementById("answer3");
+		answer3.addEventListener("click", btnClick);
+
+		next = document.getElementById("next");
+		next.addEventListener("click", nextBtn);
+
+		var clicked = false;
+
+		function btnClick(e) {
+			if (!clicked) {
+
+				keyright = e.target.getAttribute("answer");
+				if (keyright == "false") {
+					x = document.getElementById("wrong");
+					x.style.display = "block";
+					x = document.getElementById("result");
+					x.style.display = "block";
+					x.style.color = "red";
+					x = document.getElementById("next");
+					x.style.display = "block";
+				}
+				if (keyright == "true") {
+					x = document.getElementById("correct");
+					x.style.display = "block";
+					x = document.getElementById("result");
+					x.style.display = "block";
+					x = document.getElementById("next");
+					x.style.display = "block";
+
+
+				}
+				clicked = true;
+			}
+
+
+
+		}
+
+		//This is the function that the next btn executes
+		function nextBtn() {
+			console.log("exit");
+			window.location.replace("4.html");
+		}
+
+	</script>
+
+</body>
+
+</html>

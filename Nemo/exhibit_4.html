@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-aframe/0.3.9/zappar-aframe.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
+    <title>Innovation Gallery</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal.fade .modal-dialog {
+            -webkit-transition: -webkit-transform 0.3s ease-out;
+            -moz-transition: -moz-transform 0.3s ease-out;
+            -o-transition: -o-transform 0.3s ease-out;
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal-dialog iframe {
+            margin: 0 auto;
+            display: block;
+        }
+
+        .btn-primary {
+            background-color: #ed008d;
+        }
+    </style>
+
+    <!-- AFrame Components -->
+    <script>
+
+        window.localStorage["nemo_state"] = "Exhibit4";
+
+        // State Machine
+        AFRAME.registerState({
+            initialState: {
+                showUI: false,
+                mainUI: false,
+                showChallenge: false,
+                task1: false,
+                task2: false,
+                task3: false,
+                backBtn: false,
+                place: false,
+                backBtn2: false,
+                place2: false,
+            },
+
+            handlers: {
+                showUI: (state) => {
+                    if (!state.showUI) {
+                        document.querySelector("#intro").emit("scaleDown");
+                        document
+                            .querySelector("#introImg")
+                            .emit("scaleDown");
+                        document.querySelector("#intro3D").emit("scaleUp");
+                        state.showUI = true;
+                    }
+                },
+
+                mainUI: (state) => {
+                    if (!state.mainUI) {
+                        document
+                            .querySelector("#intro3D")
+                            .emit("scaleDown");
+                        document
+                            .querySelector("#anchor")
+                            .setAttribute("zappar-image", "enabled", false);
+                        document.querySelector("#mainUI").emit("scaleUp");
+                        var els = document.querySelectorAll(".btns");
+                        for (var i = 0; i < els.length; i++) {
+                            els[i].emit("scaleUp");
+                        }
+                        state.mainUI = true;
+                    }
+                },
+
+                task1: (state) => {
+                    document
+                        .querySelector("#container")
+                        .emit("scaleDown", null, false);
+
+                    var anchor = document.querySelector("#anchor");
+                    anchor.setAttribute("zappar-image", "enabled", false);
+
+                    var modelTracker =
+                        document.querySelector("#model-tracker");
+                    modelTracker.setAttribute(
+                        "zappar-image",
+                        "enabled",
+                        true
+                    );
+
+                    setTimeout(function () {
+                        document
+                            .querySelector("#modelTxt")
+                            .emit("scaleUp", null, false);
+
+                        document
+                            .querySelector("#backBtn")
+                            .emit("scaleUp", null, false);
+                    }, 400);
+
+                    state.backBtn = true;
+                    state.mainUI = false;
+                    state.task1 = true;
+                    if (state.task1 && state.task2 && state.task3) {
+                        state.showChallenge = true;
+                        //AFRAME.scenes[0].emit("showChallenge", null, false);
+                    }
+                },
+
+                task2: (state) => {
+                    state.task2 = true;
+                    if (state.task1 && state.task2 && state.task3) {
+                        state.showChallenge = true;
+                        //AFRAME.scenes[0].emit("showChallenge", null, false);
+                    }
+                },
+
+                task3: (state) => {
+                    document
+                        .querySelector("#container")
+                        .emit("scaleDown", null, false);
+
+                    var anchor = document.querySelector("#anchor");
+                    anchor.setAttribute("zappar-image", "enabled", false);
+
+                    var modelTracker =
+                        document.querySelector("#model-tracker-2");
+                    modelTracker.setAttribute(
+                        "zappar-image",
+                        "enabled",
+                        true
+                    );
+
+                    setTimeout(function () {
+                        document
+                            .querySelector("#modelTxt2")
+                            .emit("scaleUp", null, false);
+
+                        document
+                            .querySelector("#backBtn2")
+                            .emit("scaleUp", null, false);
+                    }, 400);
+
+                    state.backBtn2 = true;
+                    state.mainUI = false;
+                    state.task3 = true;
+                    if (state.task1 && state.task2 && state.task3) {
+                        state.showChallenge = true;
+                        //AFRAME.scenes[0].emit("showChallenge", null, false);
+                    }
+                },
+
+                task4: (state) => {
+
+                },
+
+                exit: (state) => {
+
+                    document
+                        .querySelector("#modelTxt")
+                        .emit("scaleDown", null, false);
+
+                    document
+                        .querySelector("#backBtn")
+                        .emit("scaleDown", null, false);
+
+                    var modelTracker =
+                        document.querySelector("#model-tracker");
+
+                    modelTracker.setAttribute(
+                        "zappar-image",
+                        "enabled",
+                        false
+                    );
+
+                    setTimeout(function () {
+                        document
+                            .querySelector("#container")
+                            .emit("scaleUp", null, false);
+                    }, 400);
+
+                    state.mainUI = true;
+                    state.backBtn = false;
+
+                    if (state.task1 && state.task2 && state.task3) {
+                        state.showChallenge = true;
+                        //AFRAME.scenes[0].emit("showChallenge", null, false);
+                    }
+                    console.log(state.backBtn);
+                    console.log(state.backBtn2);
+                },
+
+                exit2: (state) => {
+                    document
+                        .querySelector("#modelTxt2")
+                        .emit("scaleDown", null, false);
+
+                    document
+                        .querySelector("#backBtn2")
+                        .emit("scaleDown", null, false);
+
+                    var modelTracker =
+                        document.querySelector("#model-tracker-2");
+
+                    modelTracker.setAttribute(
+                        "zappar-image",
+                        "enabled",
+                        false
+                    );
+
+                    setTimeout(function () {
+                        document
+                            .querySelector("#container")
+                            .emit("scaleUp", null, false);
+                    }, 400);
+
+                    state.mainUI = true;
+                    state.backBtn2 = false;
+
+                    if (state.task1 && state.task2 && state.task3) {
+                        AFRAME.scenes[0].emit("showChallenge", null, false);
+                    }
+
+                },
+
+                showChallenge: function (state) {
+                    state.showChallenge = true;
+                },
+
+                next: (state) => { },
+            },
+        });
+
+        // Component to control the visibility of AR content
+        AFRAME.registerComponent("visibility-changer", {
+            init: function () {
+                this.el.setAttribute("visible", false);
+                this.el.parentElement.addEventListener(
+                    "zappar-visible",
+                    () => {
+                        this.el.setAttribute("visible", true);
+                        AFRAME.scenes[0].emit("showUI");
+                    }
+                );
+                this.el.parentElement.addEventListener(
+                    "zappar-notvisible",
+                    () => this.el.setAttribute("visible", false)
+                );
+            },
+            remove: function () {
+                this.el.setAttribute("visible", false);
+            },
+        });
+
+        AFRAME.registerComponent("visibility-changer-2", {
+            init: function () {
+                this.el.setAttribute("visible", false);
+                this.el.parentElement.addEventListener(
+                    "zappar-visible",
+                    () => {
+                        this.el.setAttribute("visible", true);
+                        console.log(this.el);
+                    }
+                );
+                this.el.parentElement.addEventListener(
+                    "zappar-notvisible",
+                    () => this.el.setAttribute("visible", false)
+                );
+            },
+            remove: function () {
+                this.el.setAttribute("visible", false);
+            },
+        });
+
+        AFRAME.registerComponent("visibility-changer-3", {
+            init: function () {
+                this.el.setAttribute("visible", false);
+                this.el.parentElement.addEventListener(
+                    "zappar-visible",
+                    () => {
+                        this.el.setAttribute("visible", true);
+                        console.log(this.el);
+                    }
+                );
+                this.el.parentElement.addEventListener(
+                    "zappar-notvisible",
+                    () => this.el.setAttribute("visible", false)
+                );
+            },
+            remove: function () {
+                this.el.setAttribute("visible", false);
+            },
+        });
+
+        // Component to launch modal
+        AFRAME.registerComponent("launch-challenge", {
+            schema: {
+                message: { type: "string" },
+                modal: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                var targetModal = new bootstrap.Modal(
+                    document.getElementById(this.data.modal),
+                    {}
+                );
+                el.addEventListener("click", function () {
+                    el.sceneEl.emit(evt, null, true);
+                    targetModal.toggle();
+                });
+            },
+        });
+
+        // Component to trigger next step on click
+        AFRAME.registerComponent("launch-step", {
+            schema: {
+                message: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                el.addEventListener("click", function () {
+                    el.sceneEl.emit(evt, null, true);
+                });
+            },
+        });
+    </script>
+</head>
+
+<body>
+    <a-scene renderer="antialias: true; colorManagement: true; alpha: false;" vr-mode-ui="enabled: false">
+        <!-- Ask user for camera permissions -->
+        <a-entity zappar-permissions-ui id="permissions"></a-entity>
+        <!-- Browser Compatibility -->
+        <a-entity zappar-compatibility-ui id="compatibility"></a-entity>
+        <!-- Assets -->
+        <a-assets>
+            <!-- Image Target -->
+            <a-asset-item id="exhibit-1" src="./assets/anchors/4.zpt" />
+            </a-asset-item>
+            <a-asset-item id="modelAnchor" src="./assets/anchors/idea2-01.zpt" />
+            </a-asset-item>
+
+            <!-- Images -->
+            <img id="nav1" src="assets/img/nav4.png" />
+            <img id="start" src="assets/img/next.png" />
+            <img id="idea" src="assets/img/idea.png" />
+            <img id="3D" src="assets/img/3d.png" />
+
+            <!-- 3D -->
+            <a-asset-item id="first" src="./assets/3D/lightbulb/scene.gltf">
+                <a-asset-item id="robot" src="./assets/3D/Luna_robot.glb"></a-asset-item>
+                <a-asset-item id="parrot" src="./assets/3D/penguin/Emperor_penguin.gltf"></a-asset-item>
+                <!-- Animation Mixins -->
+                <a-mixin id="scaleDownAnim"
+                    animation="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;">
+                </a-mixin>
+                <a-mixin id="scaleUpAnim"
+                    animation="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeInElastic;">
+                </a-mixin>
+
+                <!-- Color Mixins -->
+                <a-mixin id="mainClr" material="color: #ed008d"></a-mixin>
+                <a-mixin id="secondClr" material="color: red"></a-mixin>
+                <a-mixin id="accentClr" material="color: red"></a-mixin>
+                <a-mixin id="bgClr" material="color: white"></a-mixin>
+
+                <!-- Shape Mixins -->
+                <a-mixin id="bigCircle" geometry="primitive: circle; radius: 1; segments: 128;"></a-mixin>
+                <a-mixin id="midCircle" geometry="primitive: circle;radius: 0.5; segments: 64;"></a-mixin>
+                <a-mixin id="smlCircle" geometry="primitive: circle;radius: 0.25; segments: 64;"></a-mixin>
+        </a-assets>
+
+        <a-entity camera zappar-camera cursor="rayOrigin: mouse; fuse: false;" raycaster="objects: [raycastable]">
+            <!-- Intro Block -->
+            <a-entity id="intro" mixin="bigCircle bgClr scaleDownAnim"
+                text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Ga naar de tweede verdieping, zoek de wand met huishoudelijke apparaten en scan deze foto aan de zijkant van de kast.; color: #000; align: center; wrapCount: 21; lineHeight: 70; width: 1.6;"
+                position="0.45 1.45 -5" scale="0.8 0.8 0.8">
+                <a-entity mixin="bigCircle mainClr" position="0 0 -0.001" scale="1.1 1.1 1.1">
+                </a-entity>
+            </a-entity>
+
+            <a-entity id="introImg" mixin="bigCircle bgClr scaleDownAnim" position="-0.25 -0.35 -4.999" scale="1 1 1"
+                material="src: #nav1">
+                <a-entity mixin="bigCircle mainClr" position="0 0 -0.001" scale="1.1 1.1 1.1">
+                </a-entity>
+            </a-entity>
+
+            <!-- Main UI -->
+            <a-entity id="container" visible="true"
+                animation="property: scale; to: 1 1 1; dur: 400; startEvents: scaleUp; easing: easeOutExpo;"
+                animation__2="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;">
+                <a-entity scale="4 4 4">
+                    <a-entity id="mainUI" mixin="bigCircle bgClr scaleDownAnim scaleUpAnim"
+                        text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Hier zie je een aantal huishoudelijke apparaten en hoe die in de loop van de jaren zijn veranderd.; color: #000000; align: center; wrapCount: 25; lineHeight: 70; width: 1.6;"
+                        position="0 0.8 -4" scale="0 0 0">
+                        <a-entity mixin="bigCircle accentClr" position="0 0 -0.001" scale="1.1 1.1 1.1">
+                        </a-entity>
+                    </a-entity>
+                </a-entity>
+
+                <a-entity class="btns" mixin="smlCircle bgClr scaleDownAnim" position="-1 -1.5 -5" scale="0 0 0"
+                    launch-step="message: task1;"
+                    animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeInElastic; delay: 400"
+                    bind-toggle__raycastable="mainUI">
+                    <a-image src="#3D" position="0 0 0.001" scale="0.4 0.4 0.4"></a-image>
+                    <a-entity mixin="smlCircle mainClr" position="0 0 -0.001" scale="1.2 1.2 1.2"></a-entity>
+                </a-entity>
+
+                <a-entity class="btns" mixin="smlCircle bgClr scaleDownAnim" position="0 -2 -5" scale="0 0 0"
+                    launch-challenge="message: task2; modal: modal-2;"
+                    animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeInElastic; delay: 200"
+                    bind-toggle__raycastable="mainUI">
+                    <a-image src="#idea" position="0 0 0.001" scale="0.4 0.4 0.4"></a-image>
+                    <a-entity mixin="smlCircle mainClr" position="0 0 -0.001" scale="1.2 1.2 1.2"></a-entity>
+                </a-entity>
+
+                <a-entity class="btns" mixin="smlCircle bgClr scaleDownAnim" position="1 -1.5 -5" scale="0 0 0"
+                    launch-step="message: task3;"
+                    animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeInElastic; delay: 400"
+                    bind-toggle__raycastable="mainUI">
+                    <a-image src="#3D" position="0 0 0.001" scale="0.4 0.4 0.4"></a-image>
+                    <a-entity mixin="smlCircle mainClr" position="0 0 -0.001" scale="1.2 1.2 1.2"></a-entity>
+                </a-entity>
+
+                <a-entity mixin="smlCircle bgClr scaleDownAnim scaleUpAnim" position="0 -0.8 -4" scale="1 1 1"
+                    bind="visible: showChallenge" bind-toggle__raycastable="showChallenge"
+                    launch-challenge="message: task4; modal: modal-4;">
+                    <a-image src="#start" position="0.025 0 0.001" scale="0.4 0.4 0.4"></a-image>
+                    <a-entity mixin="smlCircle mainClr" position="0 0 -0.001" scale="1.2 1.2 1.2"></a-entity>
+                </a-entity>
+            </a-entity>
+
+            <a-entity id="backBtn" mixin="midCircle bgClr"
+                animation="property: scale; to: 1 1 1; dur: 400; startEvents: scaleUp; easing: easeInElastic;"
+                animation__2="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInElastic;"
+                text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Verder; color: #000000; align: center; wrapCount: 10; lineHeight: 70; width: 1;"
+                position="0 -2 -5" scale="0 0 0" visible="true" bind-toggle__raycastable="backBtn"
+                launch-step="message: exit;">
+                <a-entity mixin="midCircle accentClr" position="0 0 -0.001" scale="1.1 1.1 1.1">
+                </a-entity>
+            </a-entity>
+
+            <a-entity id="modelTxt" geometry="primitive: plane; width: 2.5; height: 0.75; " mixin="bgClr"
+                animation="property: scale; to: 1 1 1; dur: 400; startEvents: scaleUp; easing: easeInElastic;"
+                animation__2="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInElastic;"
+                text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Scan de sticker. Bespreek samen of jullie denken dat je in de toekomst dit soort elektronische helpers in huis zult hebben.; color: #000000; align: left; wrapCount: 30; lineHeight: 40; width: 2.2"
+                position="0 2.2 -5" scale="0 0 0" visible="true">
+                <a-entity geometry="primitive: plane; width: 2.6; height: 0.85; " mixin="midCircle mainClr"
+                    position="0 0 -0.001">
+                </a-entity>
+            </a-entity>
+
+            <a-entity id="backBtn2" mixin="midCircle bgClr"
+                animation="property: scale; to: 1 1 1; dur: 400; startEvents: scaleUp; easing: easeInElastic;"
+                animation__2="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInElastic;"
+                text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Verder; color: #000000; align: center; wrapCount: 10; lineHeight: 70; width: 1;"
+                position="0 -2 -5" scale="0 0 0" visible="true" bind-toggle__raycastable="backBtn2"
+                launch-step="message: exit2;">
+                <a-entity mixin="midCircle accentClr" position="0 0 -0.001" scale="1.1 1.1 1.1">
+                </a-entity>
+            </a-entity>
+
+            <a-entity id="modelTxt2" geometry="primitive: plane; width: 2.5; height: 0.75; " mixin="bgClr"
+                animation="property: scale; to: 1 1 1; dur: 400; startEvents: scaleUp; easing: easeInElastic;"
+                animation__2="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInElastic;"
+                text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Scan de sticker. Bespreek samen of jullie denken dat je in de toekomst dit soort huisdieren in huis zult hebben.; color: #000000; align: left; wrapCount: 30; lineHeight: 40; width: 2.2"
+                position="0 2.2 -5" scale="0 0 0" visible="true">
+                <a-entity geometry="primitive: plane; width: 2.6; height: 0.85;" mixin="midCircle mainClr"
+                    position="0 0 -0.001"></a-entity>
+            </a-entity>
+
+        </a-entity>
+
+        <!-- 3D model group -->
+        <a-entity zappar-image="target: #modelAnchor; enabled: false;" id="model-tracker">
+            <!-- PLACE CONTENT TO APPEAR ON THE IMAGE HERE -->
+            <a-entity id="model-container" bind-toggle__visibility-changer-2="backBtn" visible="false">
+                <a-entity id="robot3D" gltf-model="#robot" scale="1 1 1" rotation="90 0 0" animation-mixer="clip: *">
+                </a-entity>
+            </a-entity>
+        </a-entity>
+
+        <!-- 3D model group -->
+        <a-entity id="model-tracker-2" zappar-image="target: #modelAnchor; enabled: false;">
+            <!-- PLACE CONTENT TO APPEAR ON THE IMAGE HERE -->
+            <a-entity id="model-container-2" bind-toggle__visibility-changer-2="backBtn2" visible="false">
+                <a-entity id="parrot3D" gltf-model="#parrot" scale="0.2 0.2 0.2" rotation="90 0 0"
+                    animation-mixer="clip: *">
+                </a-entity>
+            </a-entity>
+        </a-entity>
+
+        <!-- SET UP OUR EXPERIENCE AS IMAGE TRACKING & GIVE IT AN IMAGE TO TRACK -->
+        <a-entity id="anchor" zappar-image="target: #exhibit-1; enabled: true;">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+            <a-entity id="content" bind-toggle__visibility-changer="!mainUI">
+                <!-- PLACE 3D OBJECTS HERE TO TRACK FROM THE CENTER OF THE IMAGE -->
+                <!-- Introductory 3D-->
+                <a-entity id="intro3D" mixin="bigCircle bgClr scaleDownAnim scaleUpAnim" position="0 0 0" scale="0 0 0"
+                    bind-toggle__raycastable="!mainUI" launch-step="message: mainUI">
+                    <a-entity mixin="bigCircle mainClr" position="0 0 -0.001" scale="1.1 1.1 1.1">
+                    </a-entity>
+                    <a-entity gltf-model="#first" position="0 0 0.5" scale="10 10 10"
+                        animation="property: rotation; from: 90 0 0; to: 90 360 0; dur:10000; loop: true; easing: linear ">
+                    </a-entity>
+                </a-entity>
+            </a-entity>
+        </a-entity>
+    </a-scene>
+
+    <!-- Modal 1 -->
+    <div class="modal fade" id="modal-1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Statische Elektriciteit</h5>
+                </div>
+                <div class="modal-body">
+                    <div clas="container">
+                        <div class="row gy-3">
+                            <p class="text-start">
+                                Een dynamo is een eenvoudige machine die
+                                elektriciteit kan opwekken. Probeer de
+                                exhibit. Wanneer wek je meer elektriciteit
+                                op? Kun je zien waar de magneten zitten?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Verder >
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2 -->
+    <div class="modal fade" id="modal-2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Bekijk de gallerij</h5>
+                </div>
+                <div class="modal-body">
+                    <div clas="container">
+                        <div class="row gy-3">
+                            <p class="text-start">
+                                Bekijk de apparaten. Herken je ze? Kies er een uit, bijvoorbeeld het apparaat dat je het
+                                mooist vindt. Wat denk je dat dit voorwerp in 2050 zal kunnen doen?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Verder >
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3 -->
+    <div class="modal fade" id="modal-3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dynamo</h5>
+                </div>
+                <div class="modal-body">
+                    <div clas="container">
+                        <div class="row gy-3">
+                            <p class="text-start">
+                                Een dynamo zet kinetische energie (namelijk
+                                die van jou als je het wiel laat draaien) om
+                                in elektrische energie. In de zwarte schijf
+                                in het midden zie je magneten. De
+                                koperkleurige cirkel is een spoel:
+                                koperdraad gewikkeld om een kern. Elektronen
+                                kunnen in koper goed bewegen. Als je aan het
+                                wiel draait, draait de magneet in de koperen
+                                spoel. De magneet brengt de elektronen in
+                                beweging, wat een elektrische stroom
+                                veroorzaakt. Dankzij de Engelse
+                                wetenschapper Michael Faraday weten we al
+                                200 jaar dat het bewegen van magneten een
+                                stroom in de spoel veroorzaakt.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Verder >
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4 - Challenge -->
+    <div class="modal fade" id="modal-4" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Opdracht</h5>
+                </div>
+                <div class="modal-body">
+                    <div clas="container">
+                        <div class="row gy-3">
+                            <p class="text-start">
+                                Neem een foto of teken een voorwerp waar je niet zonder kunt leven.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!-- Noor Use this link to redirect to the Photo Application -->
+                    <a class="btn btn-primary" href="./picture/index.html" role="button">
+                        <!-- Modal 1-4 - Challenge -->
+                        Let's Go!
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

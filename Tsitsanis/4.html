@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-aframe/0.3.9/zappar-aframe.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+
+    <script src="./assets/js/aframe-rounded-component.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
+    <title>Tsitsanis Museum</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal.fade .modal-dialog {
+            -webkit-transition: -webkit-transform 0.3s ease-out;
+            -moz-transition: -moz-transform 0.3s ease-out;
+            -o-transition: -o-transform 0.3s ease-out;
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal-dialog iframe {
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+
+    <!-- AFrame Components -->
+    <script>
+        // State Machine
+        AFRAME.registerState({
+            initialState: {
+                step1: false,
+                step2: false,
+                step3: false,
+                step4: false,
+                step5: false,
+                step6: false,
+                step7: false,
+                step8: false,
+                step9: false,
+            },
+
+            handlers: {
+
+                step1: (state) => {
+                    if (!state.step1) {
+                        // document.querySelector("#step").emit("scaleDown");
+                        // document.querySelector("#map").emit("scaleDown");
+
+                    }
+                },
+
+                step2: (state) => {
+                    if (!state.step2) {
+                        state.step2 = true;
+                        document
+                            .querySelector("#step1text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step1btn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step1text")
+                                .setAttribute("visible", false);
+                        }, 800);
+
+                        document.querySelector("#target").setAttribute("zappar-image", "enabled", true);
+                    }
+                },
+
+                step3: (state) => {
+                    if (!state.step3) {
+                        state.step3 = true;
+                        document
+                            .querySelector("#step3text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step3text").emit("setup");
+                        document.querySelector("#step3btn").emit("scaleUp");
+                        document.querySelector("#msgBtn").emit("scaleUp");
+                        document.querySelector("#target").setAttribute("zappar-image", "enabled", false);
+                    }
+                },
+
+                step4: (state) => {
+                    if (!state.step4) {
+                        state.step4 = true;
+                        var soundEls = document.querySelectorAll('[sound]');
+                        for (var i = 0; i < soundEls.length; i++) {
+                            var item = soundEls[i];
+                            soundEls.forEach(soundEl => {
+                                soundEl.components.sound.stopSound()
+                            })
+                        }
+                        document
+                            .querySelector("#step3text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step3btn")
+                            .emit("scaleDown");
+                        document
+                            .querySelector("#msgBtn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step1text")
+                                .setAttribute("visible", false);
+                        }, 800);
+                        document
+                            .querySelector("#step4text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step4text").emit("setup");
+                        document.querySelector("#step4btn").emit("scaleUp");
+                    }
+                },
+
+                step5: (state) => {
+                    if (!state.step5) {
+                        state.step5 = true;
+                        document
+                            .querySelector("#step4text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step4btn")
+                            .setAttribute("visible", false);
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step4text")
+                                .setAttribute("visible", false);
+                        }, 800);
+                        document
+                            .querySelector("#step5text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step5text").emit("setup");
+                        document.querySelector("#step5btn").setAttribute("visible", true);
+                    }
+                },
+
+                step6: (state) => {
+                    if (!state.step6) {
+                        state.step6 = true;
+                        document
+                            .querySelector("#step5text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step5btn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step5text")
+                                .setAttribute("visible", false);
+                        }, 800);
+                        document.querySelector("#target-2").setAttribute("zappar-image", "enabled", true);
+                    }
+                },
+
+                step7: (state) => {
+                    if (!state.step7) {
+                        state.step7 = true;
+                        document.querySelector("#target-2").setAttribute("zappar-image", "enabled", false);
+                        document.querySelector("#step7text").setAttribute("visible", true);
+                        document.querySelector("#step7text").emit("setup");
+                        var els = document.querySelectorAll(".btns");
+                        for (var i = 0; i < els.length; i++) {
+                            els[i].emit("scaleUp", null, false);
+                        }
+                    }
+                }
+            },
+        });
+
+        // Component to control the visibility of AR content
+        AFRAME.registerComponent("visibility-step", {
+            schema: {
+                step: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.step;
+                el.addEventListener("zappar-visible", () =>
+                    AFRAME.scenes[0].emit(evt, null, false)
+                );
+            },
+        });
+
+        // Component to trigger next step on click
+        AFRAME.registerComponent("launch-step", {
+            schema: {
+                message: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                el.addEventListener("click", function () {
+                    el.sceneEl.emit(evt, null, false);
+                });
+            },
+        });
+
+        // Component to launch modal
+        AFRAME.registerComponent("launch-modal", {
+            schema: {
+                modal: {
+                    type: "string"
+                },
+            },
+            init: function () {
+                var el = this.el;
+                var targetModal = new bootstrap.Modal(
+                    document.getElementById(this.data.modal), {}
+                );
+                el.addEventListener("click", function () {
+                    targetModal.toggle();
+                });
+            },
+        });
+
+    </script>
+</head>
+
+<body>
+    <a-scene vr-mode-ui="enabled: false" renderer="antialias: true; precision: high;">
+        <!-- Ask user for camera permissions -->
+        <a-entity zappar-permissions-ui id="permissions"></a-entity>
+        <!-- Browser Compatibility -->
+        <a-entity zappar-compatibility-ui id="compatibility"></a-entity>
+
+        <!-- Assets -->
+        <a-assets>
+            <!-- Image Target -->
+            <a-asset-item id="anchor-1" src="./assets/anchors/3a.zpt" />
+            <a-asset-item id="anchor-2" src="./assets/anchors/3c.zpt" />
+
+
+            <!-- Images -->
+            <img id="kremsImg" src="assets/img/Krems.png" />
+            <img id="lucaImg" src="assets/img/Lucarini.png" />
+            <img id="nemoImg" src="assets/img/Nemo.png" />
+            <img id="msgImg" src="assets/img/tsitsanis_btn.png" />
+
+
+            <!-- Video -->
+
+            <!-- Audio -->
+            <audio id="msgAud" src="./assets/audio/sakaflias_song.mp3" preload="auto" crossorigin="anonymous"></audio>
+
+            <!-- 3D -->
+        </a-assets>
+
+        <a-camera zappar-camera cursor="rayOrigin: mouse; fuse: false;" raycaster="objects: [raycastable]">
+            <!-- Text 1 -->
+            <a-rounded id="step1text" position="0 0.7 -2.5" width="1.3" height="1.2" radius="0.05" visible="true"
+                animation__setup="property: position; to: 0 0.7 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.7 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value:Το κτήριο του μουσείου κρύβει αρκετά μυστικά. Έλα μαζί μου να τα ανακαλύψουμε. Βρες το σημείο που βρίσκεται το κελί της φυλακής και σάρωσε την φωτογραφία με τις παλιές φυλακές της πόλης.; color: #000000; align: left; wrapCount: 27; lineHeight: 70; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.24" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+            <!-- Button 1 -->
+            <a-entity id="step1btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Συνέχεια; color: #000000; align: center; wrapCount: 10; lineHeight: 40; width:0.5;"
+                position="0 -2 -5" scale="2 2 2" bind-toggle__raycastable="!step2" launch-step="message: step2"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: start; easing: easeOutElastic; delay: 2000;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: linear;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Text 3 -->
+            <a-rounded id="step3text" position="1.5 0.7 -2.5" width="1.3" height="1.2" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.7 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.7 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Το κτήριο που βρίσκεσαι ήταν φυλακή μέχρι το 2006. Στα στενά της φυλακής αυτής έγινε ένας φόνος που δεν πέρασε απαρατήρητος, ο φόνος του Σακαφλιά, για τον οποίο έχω γράψει και τραγούδι. Το ξέρεις.; color: #000000; align: left; wrapCount: 27; lineHeight: 70; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.24" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+            <!-- Button 3 -->
+            <a-entity id="step3btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Συνέχεια; color: #000000; align: center; wrapCount: 10; lineHeight: 40; width:0.5;"
+                position="0.8 -2 -5" scale="0 0 0" bind-toggle__raycastable="!step4" launch-step="message: step4"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Button Audio -->
+            <a-entity id="msgBtn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                position="-0.8 -2 -5" scale="0 0 0" bind-toggle__raycastable="!step4" sound="src: #msgAud; on: click"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;"
+                sound="src: #msgAud; on: click">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+                <a-image src="#msgImg" position="0 0 0.001" scale="0.5 0.5 0.5"></a-image>
+
+            </a-entity>
+
+            <!-- Text 4 -->
+            <a-rounded id="step4text" position="1.5 0.7 -2.5" width="1.3" height="1.2" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.7 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.7 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Γνωρίζεις άραγε με ποιόν τρόπο επικοινωνούσαν οι κρατούμενοι με τους συγγενείς ή φίλους που έρχονταν να τους επισκεφθούν στη φυλακή. Φυσικά αυτό γινόταν με το τηλέφωνο που βρίσκεται πάνω στο τραπέζι.; color: #000000; align: left; wrapCount: 27; lineHeight: 70; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.24" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+            <!-- Button 4 -->
+            <a-entity id="step4btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Συνέχεια; color: #000000; align: center; wrapCount: 10; lineHeight: 40; width:0.5;"
+                position="0 -2 -5" scale="0 0 0" bind-toggle__raycastable="!step5" launch-step="message: step5"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 400;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Text 5 -->
+            <a-rounded id="step5text" position="1.5 0.8 -2.5" width="1.3" height="1" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.8 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.8 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Πήγαινε στην αίθουσα εκδηλώσεων και σάρωσε την εικόνα στην οποία απεικονίζονται τρία διαφορετικά μουσεία.; color: #000000; align: left; wrapCount: 27; lineHeight: 70; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.04" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+            <!-- Button 5 -->
+            <a-entity id="step5btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Συνέχεια; color: #000000; align: center; wrapCount: 10; lineHeight: 40; width:0.5;"
+                position="0 -2 -5" scale="2 2 2" bind-toggle__raycastable="!step6" launch-step="message: step6"
+                visible="false"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 800;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Text 7 -->
+            <a-rounded id="step7text" position="1.5 0.8 -2.5" width="1.3" height="1" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.8 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.8 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/cera-gr-light-msdf.json; fontImage: ./fonts/cera-gr-light.png; negate: false; value: Πήγαινε στην αίθουσα εκδηλώσεων και σάρωσε την εικόνα στην οποία απεικονίζονται τρία διαφορετικά μουσεία.; color: #000000; align: left; wrapCount: 27; lineHeight: 70; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.04" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+            <!-- Button Krems -->
+            <a-entity class="btns" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                position="-0.8 -1 -5" scale="0 0 0" bind-toggle__raycastable="!step8"
+                animation__scaleUp="property: scale; to: 1.7 1.7 1.7; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 800;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;"
+                launch-modal="modal: modal-krems">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+                <a-image src="#kremsImg" position="0 0 0.001" scale="0.5 0.5 0.5"></a-image>
+
+            </a-entity>
+
+            <!-- Button Lucarini -->
+            <a-entity class="btns" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                position="0 -2 -5" scale="0 0 0" bind-toggle__raycastable="!step8"
+                animation__scaleUp="property: scale; to: 1.7 1.7 1.7; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 800;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;"
+                launch-modal="modal: modal-luca">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+                <a-image src="#lucaImg" position="0 0 0.001" scale="0.5 0.5 0.5"></a-image>
+
+            </a-entity>
+
+            <!-- Button Nemo -->
+            <a-entity class="btns" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                position="0.8 -1 -5" scale="0 0 0" bind-toggle__raycastable="!step8"
+                animation__scaleUp="property: scale; to: 1.7 1.7 1.7; dur: 800; startEvents: scaleUp; easing: easeOutElastic; delay: 800;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;"
+                launch-modal="modal: modal-nemo">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+                <a-image src="#nemoImg" position="0 0 0.001" scale="0.5 0.5 0.5"></a-image>
+
+            </a-entity>
+
+        </a-camera>
+
+        <!-- SET UP OUR EXPERIENCE AS IMAGE TRACKING & GIVE IT AN IMAGE TO TRACK -->
+        <a-entity id="target" zappar-image="target: #anchor-1; enabled: false;" visibility-step="step: step3">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+        </a-entity>
+
+        <a-entity id="target-2" zappar-image="target: #anchor-2; enabled: false;" visibility-step="step: step7">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+        </a-entity>
+
+    </a-scene>
+
+    <!-- Modal Krems -->
+    <div class="modal fade" id="modal-krems" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Kunstmeile Krems</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row gy-3">
+                            <img src="assets/img/kremsphoto.jpg" class="img-fluid" />
+
+                            <p class="text-start">
+                                Το μουσείο καρικατούρας Kunstmeile Krems βρίσκεται στην Αυστρία, στην πόλη Krems an der
+                                Donau και είναι αφιερωμένο στις καρικατούρες, την πολιτική σάτιρα, τα καρτούν και τα
+                                κόμικς. Η οροφή του κτηρίου παραπέμπει στις οροφές των παλιών σπιτιών της περιοχής.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Συνέχεια
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Lucarini -->
+    <div class="modal fade" id="modal-luca" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Palazzo Lucarini</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row gy-3">
+                            <img src="assets/img/lucariniphoto.jpg" class="img-fluid" />
+
+                            <p class="text-start">
+                                Στο Τρέβι της Ιταλίας βρίσκεται το μουσείο μοντέρνας τέχνης Palazzo Lucarini
+                                Contemporary. Το κτήριο στο οποίο στεγάζεται είναι χτισμένο τον 15ο αιώνα. Αρχικά ήταν
+                                κατοικία της οικογένειας Λουκαρίνι, έπειτα σχολείο για παιδιά, αλλά και ορφανοτροφείο.
+                                Ανάλογα με τις ανάγκες της εποχής και τους εκάστοτε ιδιοκτήτες, η χρήση του κτηρίου ήταν
+                                διαφορετική.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Συνέχεια
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3 -->
+    <div class="modal fade" id="modal-nemo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nemo</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row gy-3">
+                            <img src="assets/img/nemophoto.jpg" class="img-fluid" />
+
+                            <p class="text-start">
+                                Πολύ ιδιαίτερο σχήμα έχει το μουσείο ΝΕΜΟ που βρίσκεται στο Άμστερνταμ της Ολλανδίας, δε
+                                νομίζεις; Χτισμένο πάνω σε ένα υπόγειο τούνελ, το μουσείο μοιάζει να ξεπροβάλει δυναμικά
+                                μέσα από το νερό, εντυπωσιάζοντας τον επισκέπτη.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Συνέχεια
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

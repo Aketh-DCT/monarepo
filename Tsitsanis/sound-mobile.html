@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- link to fonts-->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600;700&display=swap" rel="stylesheet">
+
+
+	<style type="text/css">
+		html {
+			height: 100%;
+			background: url('resources/bg.jpg') no-repeat center center fixed;
+			-webkit-background-size: cover;
+			-moz-background-size: cover;
+			-o-background-size: cover;
+			background-size: cover;
+			height: 100%;
+
+		}
+
+		body {
+			padding: 0;
+			margin: 0;
+
+		}
+
+		#soundGame_playarea {
+			text-align: center;
+			width: 100%;
+			margin: auto;
+		}
+
+		#title {
+			font-size: 1em;
+			color: #3b8dcc;
+			margin-bottom: 5px;
+			font-family: 'Source Sans Pro', sans-serif;
+		}
+
+		.explanation {
+			font-size: 0.8em;
+			font-weight: bold;
+			color: black;
+			background-color: #f59bc1;
+			border-radius: 15px;
+			text-align: center;
+			width: 80%;
+			margin: 0 auto 5px auto;
+			padding: 5px;
+			font-family: 'Source Sans Pro', sans-serif;
+		}
+
+		.btn {
+			width: 80px;
+			height: 80px;
+			background-color: #eee;
+			border-width: 4px;
+			border-style: solid;
+			border-color: white;
+			margin: 8px auto;
+			border-radius: 50px;
+			border-color: #ddd;
+
+		}
+
+		#playarea {
+			width: 100%;
+		}
+
+		#soundGame_playarea {
+			padding-top: 20px;
+			padding-bottom: 20px;
+		}
+
+		.buttonarea {
+			width: 50%;
+			text-align: center;
+			float: left;
+			margin: auto;
+		}
+
+		.buttonarea img {
+			padding: 10px 0;
+		}
+
+		.btn_img {
+			width: 80%;
+			display: block;
+			margin: auto;
+			cursor: pointer;
+
+		}
+
+		.drop_area_1 {
+			width: 30%;
+			height: 80px;
+			padding: 1%;
+			border: 5px solid #ddd;
+			border-radius: 20px;
+			margin: 10px auto;
+			display: inline-block;
+			background-color: #eee;
+			margin-right: 20px;
+		}
+
+		.drop_area_1 img {
+			padding: 15px 0;
+			width: 60%;
+		}
+
+		.drop_area_2 {
+			width: 30%;
+			height: 80px;
+			padding: 1%;
+			border: 5px solid #ddd;
+			border-radius: 20px;
+			margin: 10px auto;
+			display: inline-block;
+			background-color: #eee;
+		}
+
+		.drop_area_2 img {
+			padding: 15px 0;
+			width: 60%;
+		}
+
+		#compare_button {
+			font-size: 1em;
+			font-weight: bold;
+			width: 100px;
+			height: 100px;
+			background-color: #e5de12;
+			border: none;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			margin-top: 10px;
+			border-radius: 50%;
+			font-family: 'Source Sans Pro', sans-serif;
+		}
+
+		#compare_button:hover {
+			background-color: #d5b312;
+			cursor: pointer;
+		}
+
+		.draggable {
+			-ms-touch-action: none;
+			touch-action: none;
+			user-select: none;
+		}
+
+		.drop-target {
+			border: 3px solid #FC6E5E;
+			background-color: #bbb;
+			border-radius: 20px;
+		}
+
+		.drop-target_btn {
+			border-width: 2px;
+			border-style: solid;
+			border-color: #FC6E5E;
+			background-color: #ddd;
+		}
+
+		#result_header {
+			font-size: 1em;
+			font-weight: bold;
+			color: white;
+			font-family: 'Source Sans Pro', sans-serif;
+		}
+
+		/* CSS for display in mobile */
+		@media only screen and (min-width: 768px) {
+
+			#title {
+				font-size: 2.5em;
+				margin-bottom: 10px;
+			}
+
+			.explanation {
+				font-size: 1em;
+				width: 80%;
+				margin: 0 auto 10px auto;
+				padding: 15px;
+			}
+
+			.btn {
+				width: 120px;
+				height: 120px;
+				border-width: 4px;
+				border-color: #ddd;
+				border-radius: 50px;
+				margin-left: 10px;
+				display: inline-block;
+			}
+
+			.buttonarea img {
+				padding: 20px 0;
+			}
+
+			.drop_area_1 {
+				width: 30%;
+				height: 120px;
+				border: 5px solid #ddd;
+				margin: 20px 50px;
+			}
+
+			.drop_area_1 img {
+				padding: 10px 0;
+				height: 100px;
+				width: auto;
+			}
+
+			.drop_area_2 {
+				width: 30%;
+				height: 120px;
+				border: 5px solid #ddd;
+				margin: 20px 50px;
+			}
+
+			.drop_area_2 img {
+				padding: 10px 0;
+				height: 100px;
+				width: auto;
+			}
+
+			#compare_button {
+				font-size: 1.5em;
+				width: 130px;
+				height: 130px;
+				margin-top: 10px;
+			}
+
+			#compare_button:hover {
+				background-color: #d5b312;
+				cursor: pointer;
+			}
+
+
+			#result_header {
+				font-size: 2em;
+			}
+
+			.drop-target {
+				border: 4px solid #FC6E5E;
+				background-color: #bbb;
+				border-radius: 20px;
+			}
+
+			.drop-target_btn {
+				border-width: 3px;
+				border-style: solid;
+				border-color: #FC6E5E;
+				background-color: #ddd;
+			}
+
+		}
+	</style>
+</head>
+
+<body>
+	<div id="soundGame_playarea">
+
+		<h1 id="title">ΤΑΙΡΙΑΞΤΕ ΤΑ ΤΡΑΓΟΥΔΙΑ</h1>
+		<p class="explanation">Ακούστε τα κομμάτια και συνδυάστε τα σωστά τραγούδια με τις ενόργανες εκτελέσεις τους.
+		</p>
+		<div id="playarea">
+			<div id="leftArea" class="buttonarea">
+				<div class="btn" ondrop="drop(event)" ondragover="allowDrop(event)" destination="drop_area_1"><img
+						src="resources/button_b.png" id="b1" class="left_btn btn_img draggable og" draggable="true"
+						destination="drop_area_1"></div>
+				<div class="btn" ondrop="drop(event)" ondragover="allowDrop(event)" destination="drop_area_1"><img
+						src="resources/button_b.png" id="b2" class="left_btn btn_img draggable og" draggable="true"
+						destination="drop_area_1"></div>
+				<div class="btn" ondrop="drop(event)" ondragover="allowDrop(event)" destination="drop_area_1"><img
+						src="resources/button_b.png" id="b3" class="left_btn btn_img draggable og" draggable="true"
+						destination="drop_area_1"></div>
+			</div>
+			<div id="rightArea" class="buttonarea">
+				<div class="btn" ondrop="drop(event)" ondragover="allowDrop(event)" destination="drop_area_2"><img
+						src="resources/button_b.png" id="c1" class="right_btn btn_img draggable" draggable="true"
+						destination="drop_area_2"></div>
+				<div class="btn" ondrop="drop(event)" ondragover="allowDrop(event)" destination="drop_area_2"><img
+						src="resources/button_b.png" id="c2" class="right_btn btn_img draggable" draggable="true"
+						destination="drop_area_2"></div>
+				<div class="btn" ondrop="drop(event)" ondragover="allowDrop(event)" destination="drop_area_2"><img
+						src="resources/button_b.png" id="c3" class="right_btn btn_img draggable" draggable="true"
+						destination="drop_area_2"></div>
+			</div>
+		</div>
+		<div style="clear: both;"></div>
+		<div id="drop_area_1" class="drop_area_1" ondrop="drop(event)" ondragover="allowDrop(event)"
+			destination="drop_area_1"></div>
+		<div id="drop_area_2" class="drop_area_2" ondrop="drop(event)" ondragover="allowDrop(event)"
+			destination="drop_area_2"></div>
+		<div style="clear: both;"></div>
+		<button type="button" id="compare_button">Ταίριαξε!</button>
+		<h2 id="result_header">&nbsp;</h2>
+	</div>
+
+	<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
+	<script>
+
+
+		const og = ['resources/apokliros_cover.mp3',
+			'resources/kyriaki_cover.mp3',
+			'resources/skalopati_cover.mp3'];
+
+		const cover = ['resources/apokliros_og.mp3',
+			'resources/kyriaki_og.mp3',
+			'resources/skalopati_og.mp3'];
+
+		var leftArea = document.getElementById("leftArea");
+		var generated_nums = [];
+		var filled_buttons_b = [];
+		var filled_buttons_c = [];
+		var itemInArea = true;
+
+		var selection_1;
+		var selection_2;
+		var keyleft;
+		var keyright;
+		var audio = new Audio();
+
+		var points = 0;
+
+		const position = { x: 0, y: 0 }
+
+		let fail = new Audio('resources/fail.mp3');
+		let success = new Audio('resources/success.mp3');
+		let land = new Audio('resources/land.mp3');
+		let empty = new Audio('resources/empty.mp3');
+
+
+
+		for (var i = 1; i <= og.length; i++) {
+			//select a random number which will be the position in the array
+			//from where we take the sound and make sure we don't duplicate it
+			var random;
+			var random_button;
+			random = selectRandom();
+			while (generated_nums.includes(random)) {
+				random = selectRandom();
+			}
+
+			generated_nums.push(random);
+
+			selected_sound = og[og.length - og.length + random];
+			//do the same so we pick a random button on the right side
+			random_button = (selectRandom() + 1);
+			while (filled_buttons_b.includes(random_button)) {
+				random_button = (selectRandom() + 1);
+			}
+
+			filled_buttons_b.push(random_button);
+			//assign the audio as a value on the element and add a click event listener on that button			
+			b = document.getElementById("b" + random_button);
+			b.setAttribute('audiofile', selected_sound);
+			b.setAttribute('music_key', i);
+			b.addEventListener("click", btnClick);
+			//now we select a random button on the right side
+			random_button = (selectRandom() + 1);
+			while (filled_buttons_c.includes(random_button)) {
+				random_button = (selectRandom() + 1);
+			}
+
+			filled_buttons_c.push(random_button);
+			//we assign the same position from the array as sound goes but from the second array
+			//and add click event listener on that as well
+			selected_sound = cover[cover.length - cover.length + random];
+			c = document.getElementById("c" + i);
+			c.setAttribute('audiofile', selected_sound);
+			c.setAttribute('music_key', i);
+			c.addEventListener("click", btnClick);
+
+			var button;
+			button = document.getElementById("compare_button")
+			button.addEventListener("click", comparison);
+
+		}
+
+		interact('.draggable').draggable({
+			listeners: {
+				start(event) {
+				},
+				move(event) {
+					var target = event.target
+					// keep the dragged position in the data-x/data-y attributes
+					var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+					var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+					// translate the element
+					target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+					// update the position attributes
+					target.setAttribute('data-x', x)
+					target.setAttribute('data-y', y)
+				},
+
+			}
+		})
+
+		/* what to do when dropping an object on the left bottom area */
+		interact('.drop_area_1').dropzone({
+			overlap: 0.75,
+
+			// listen for drop related events:
+
+			ondropactivate: function (event) {
+				// add active dropzone feedback
+				//console.log("ondropactivate");
+			},
+			ondragenter: function (event) {
+				keyleft = event.relatedTarget.getAttribute("music_key");
+				dropzoneElement = event.target;
+				dropzoneElement.classList.add('drop-target');
+			},
+			ondragleave: function (event) {
+				// remove the drop feedback style
+				//console.log("ondragleave");
+				keyleft = undefined;
+				dropzoneElement = event.target;
+				dropzoneElement.classList.remove('drop-target');
+				itemInArea = false;
+			},
+			ondrop: function (event) {
+				if (event.target.childNodes.length < 1) {
+					land.play();
+					event.target.appendChild(event.relatedTarget);
+					event.relatedTarget.style.transform =
+						`translate(0px, 0px)`
+
+					var x = (parseFloat(event.relatedTarget.getAttribute('data-x')) || 0) + event.dx
+					var y = (parseFloat(event.relatedTarget.getAttribute('data-y')) || 0) + event.dy
+					event.relatedTarget.setAttribute('data-x', x)
+					event.relatedTarget.setAttribute('data-y', y)
+				}
+			},
+			ondropdeactivate: function (event) {
+				// remove active dropzone feedback
+				// console.log("ondropdeactivate");
+				if (itemInArea == false) {
+					event.relatedTarget.style.transform =
+						`translate(0px, 0px)`
+					var x = (parseFloat(event.relatedTarget.getAttribute('data-x')) || 0) + event.dx
+					var y = (parseFloat(event.relatedTarget.getAttribute('data-y')) || 0) + event.dy
+					event.relatedTarget.setAttribute('data-x', x)
+					event.relatedTarget.setAttribute('data-y', y)
+				}
+
+			}
+		})
+
+		/* what to do when dropping an object on the right bottom area */
+		interact('.drop_area_2').dropzone({
+			overlap: 0.75,
+
+			// listen for drop related events:
+
+			ondropactivate: function (event) {
+				// add active dropzone feedback
+				//console.log("ondropactivate");
+			},
+			ondragenter: function (event) {
+				keyright = event.relatedTarget.getAttribute("music_key");
+				dropzoneElement = event.target;
+				dropzoneElement.classList.add('drop-target');
+			},
+			ondragleave: function (event) {
+				// remove the drop feedback style
+				//console.log("ondragleave");
+				keyright = undefined;
+				dropzoneElement = event.target;
+				dropzoneElement.classList.remove('drop-target');
+				itemInArea = false;
+
+			},
+			ondrop: function (event) {
+				if (event.target.childNodes.length < 1) {
+					land.play();
+					event.target.appendChild(event.relatedTarget);
+					event.relatedTarget.style.transform =
+						`translate(0px, 0px)`
+
+					var x = (parseFloat(event.relatedTarget.getAttribute('data-x')) || 0) + event.dx
+					var y = (parseFloat(event.relatedTarget.getAttribute('data-y')) || 0) + event.dy
+					event.relatedTarget.setAttribute('data-x', x)
+					event.relatedTarget.setAttribute('data-y', y)
+					itemInArea = true;
+				}
+
+
+			},
+			ondropdeactivate: function (event) {
+				// remove active dropzone feedback
+				// console.log("ondropdeactivate");
+				if (itemInArea == false) {
+					event.relatedTarget.style.transform =
+						`translate(0px, 0px)`
+					var x = (parseFloat(event.relatedTarget.getAttribute('data-x')) || 0) + event.dx
+					var y = (parseFloat(event.relatedTarget.getAttribute('data-y')) || 0) + event.dy
+					event.relatedTarget.setAttribute('data-x', x)
+					event.relatedTarget.setAttribute('data-y', y)
+				}
+
+			}
+		})
+
+		/* what to do when dropping an object on the starting areas */
+		interact('.btn').dropzone({
+			overlap: 0.2,
+
+			// listen for drop related events:
+
+			ondrop: function (event) {
+				if (event.target.childNodes.length < 1) {
+					land.play();
+					event.target.appendChild(event.relatedTarget);
+					event.relatedTarget.style.transform =
+						`translate(0px, 0px)`
+
+					var x = (parseFloat(event.relatedTarget.getAttribute('data-x')) || 0) + event.dx
+					var y = (parseFloat(event.relatedTarget.getAttribute('data-y')) || 0) + event.dy
+					event.relatedTarget.setAttribute('data-x', x)
+					event.relatedTarget.setAttribute('data-y', y)
+				}
+			},
+			ondragenter: function (event) {
+				dropzoneElement = event.target;
+				dropzoneElement.classList.add('drop-target_btn');
+			},
+			ondragleave: function (event) {
+				dropzoneElement = event.target;
+				dropzoneElement.classList.remove('drop-target_btn');
+				itemInArea = false;
+
+			},
+			ondropdeactivate: function (event) {
+				// remove active dropzone feedback
+				// console.log("ondropdeactivate");
+				if (itemInArea == false) {
+					event.relatedTarget.style.transform =
+						`translate(0px, 0px)`
+					var x = (parseFloat(event.relatedTarget.getAttribute('data-x')) || 0) + event.dx
+					var y = (parseFloat(event.relatedTarget.getAttribute('data-y')) || 0) + event.dy
+					event.relatedTarget.setAttribute('data-x', x)
+					event.relatedTarget.setAttribute('data-y', y)
+				}
+			}
+		})
+
+		// what happens when you click the comparison button based on conditions
+		function comparison() {
+			var firstarea;
+			var firstareachild;
+			var firstareachild_key;
+			var secondarea;
+			var secondareachild;
+			var secondareachild_key;
+			firstarea = document.getElementById("drop_area_1");
+			secondarea = document.getElementById("drop_area_2");
+			audio.pause();
+			audio.currentTime = 0;
+
+			if (firstarea.firstChild && secondarea.firstChild) {
+
+				firstareachild = firstarea.firstChild;
+				firstareachild_key = firstareachild.getAttribute("music_key");
+
+
+				secondareachild = secondarea.firstChild;
+				secondareachild_key = secondareachild.getAttribute("music_key");
+
+				if (firstareachild_key == secondareachild_key) {
+					document.getElementById("result_header").innerHTML = "&nbsp;";
+					success.play();
+					//adds +1 to points for each success
+					points += 1;
+					console.log("you have " + points + " points.");
+					firstareachild.remove();
+					secondareachild.remove();
+					dropzoneElement = document.getElementById("drop_area_1");
+					dropzoneElement.classList.remove('drop-target');
+					dropzoneElement = document.getElementById("drop_area_2");
+					dropzoneElement.classList.remove('drop-target');
+					if (points == 3) {
+						win();
+					}
+
+				} else {
+					fail.play();
+					document.getElementById("result_header").innerHTML = "&nbsp;";
+				}
+
+			} else {
+				empty.play();
+				document.getElementById("result_header").innerHTML = "Πρέπει να επιλέξετε δύο κομμάτια.";
+			}
+
+		}
+
+
+
+		function selectRandom() {
+			var randomNumber = Math.floor(Math.random() * og.length);
+			return randomNumber;
+		}
+
+		// stop all audio and play the sound associated with the object
+		function btnClick(e) {
+			audio.pause();
+			audio.currentTime = 0;
+			success.pause();
+			success.currentTime = 0;
+			fail.pause();
+			fail.currentTime = 0;
+			land.pause();
+			land.currentTime = 0;
+			empty.pause();
+			empty.currentTime = 0;
+			audio.src = e.target.getAttribute('audiofile');
+			audio.play();
+		}
+
+		// what do do when you get all 3 points
+		function win() {
+			console.log("you win!!!");
+			window.location.replace("3.html");
+		}
+
+	</script>
+
+</body>
+
+</html>
