@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-aframe/0.3.9/zappar-aframe.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="./assets/js/aframe-rounded-component.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
+    <title>Caricature Step 3</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal.fade .modal-dialog {
+            -webkit-transition: -webkit-transform 0.3s ease-out;
+            -moz-transition: -moz-transform 0.3s ease-out;
+            -o-transition: -o-transform 0.3s ease-out;
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal-dialog iframe {
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+
+    <!-- AFrame Components -->
+    <script>
+        // State Machine
+        AFRAME.registerState({
+            initialState: {
+                start: true,
+                cat: false,
+                step3: false,
+                showBtns: false,
+                option1: false,
+                option2: false,
+                option3: false,
+                phone: false,
+                catSetup: false,
+                end: 0,
+            },
+
+            handlers: {
+                cat: (state) => {
+                    if (!state.cat) {
+                        let catAudio =
+                            document.querySelector("#audioCat10");
+                        let catAnimation = document.querySelector("#cat3D");
+                        document.querySelector("#start").emit("scaleDown");
+
+                        catAnimation.setAttribute(
+                            "animation-mixer",
+                            "timeScale",
+                            "0.3"
+                        );
+
+                        catAudio.components.sound.playSound();
+                        state.cat = true;
+                    } else if (state.catSetup) {
+                        let catAudio =
+                            document.querySelector("#audioCat12");
+                        let catAnimation = document.querySelector("#cat3D");
+
+                        catAnimation.setAttribute(
+                            "animation-mixer",
+                            "timeScale",
+                            "0.3"
+                        );
+
+                        catAudio.components.sound.playSound();
+                        state.catSetup = true;
+                    }
+                },
+
+                step3: (state) => {
+                    if (!state.step3) {
+                        state.showBtns = true;
+                        let catModel = document.querySelector("#cat3D");
+                        let els = document.querySelectorAll(".btns");
+                        catModel.setAttribute(
+                            "animation-mixer",
+                            "clip",
+                            "Bounce"
+                        );
+                        for (let i = 0; i < els.length; i++) {
+                            els[i].emit("scaleUp");
+                        }
+                        state.step3 = true;
+                    }
+                },
+
+                option1: (state) => {
+                    if (!state.option1) {
+                        let catModel = document.querySelector("#cat3D");
+                        let catAudio =
+                            document.querySelector("#audioCat03");
+                        catAudio.components.sound.playSound();
+                        catModel.setAttribute(
+                            "animation-mixer",
+                            "clip",
+                            "Jump"
+                        );
+                        document.querySelector("#btn1").emit("option");
+                        document.querySelector("#btn2").emit("scaleDown");
+                        document.querySelector("#btn3").emit("scaleDown");
+                        document.querySelector("#exit").emit("scaleDown");
+                        state.option1 = true;
+                        state.end = 1;
+                    }
+                },
+
+                option2: (state) => {
+                    if (!state.option2) {
+                        let catModel = document.querySelector("#cat3D");
+                        let catAudio =
+                            document.querySelector("#audioCat03");
+                        catAudio.components.sound.playSound();
+                        catModel.setAttribute(
+                            "animation-mixer",
+                            "clip",
+                            "Jump"
+                        );
+                        document.querySelector("#btn2").emit("option");
+                        document.querySelector("#btn1").emit("scaleDown");
+                        document.querySelector("#btn3").emit("scaleDown");
+                        document.querySelector("#exit").emit("scaleDown");
+                        state.option2 = true;
+                        state.end = 2;
+                    }
+                },
+
+                option3: (state) => {
+                    if (!state.option3) {
+                        let catModel = document.querySelector("#cat3D");
+                        let catAudio =
+                            document.querySelector("#audioCat03");
+                        catAudio.components.sound.playSound();
+                        catModel.setAttribute(
+                            "animation-mixer",
+                            "clip",
+                            "Jump"
+                        );
+                        document.querySelector("#btn3").emit("option");
+                        document.querySelector("#btn1").emit("scaleDown");
+                        document.querySelector("#btn2").emit("scaleDown");
+                        document.querySelector("#exit").emit("scaleDown");
+                        state.option3 = true;
+                        state.end = 3;
+                    }
+                },
+
+                activity: (state) => {
+                    if (state.end == 1) {
+                        let button = document.querySelector("#btn1");
+                        let catAudio = document.querySelector("#catAudioA");
+                        button.emit("scaleDown");
+                        catAudio.components.sound.playSound();
+                    } else if (state.end == 2) {
+                        let button = document.querySelector("#btn2");
+                        let catAudio = document.querySelector("#catAudioB");
+                        button.emit("scaleDown");
+                        catAudio.components.sound.playSound();
+                    } else if (state.end == 3) {
+                        let button = document.querySelector("#btn3");
+                        let catAudio = document.querySelector("#catAudioC");
+                        button.emit("scaleDown");
+                        catAudio.components.sound.playSound();
+                    }
+                },
+
+                end: (state) => {
+                    if (state.end == 1) {
+                        window.location.replace("A_step1.html");
+                    } else if (state.end == 2) {
+                        window.location.replace("B_step1.html");
+                    } else if (state.end == 3) {
+                        state.phone = true;
+                        document
+                            .querySelector("#target")
+                            .setAttribute(
+                                "zappar-image",
+                                "enabled",
+                                "false"
+                            );
+                        document.querySelector("#phoneBtn").emit("setup");
+                        document
+                            .querySelector("#audioPhone")
+                            .components.sound.playSound();
+                    }
+                },
+
+                videoSetup: (state) => {
+                    document.querySelector("#phoneBtn").emit("scaleDown");
+                    document
+                        .querySelector("#audioPhone")
+                        .components.sound.stopSound();
+                    document.querySelector("#directorVideo").emit("setup");
+                    document.querySelector("#director").play();
+                },
+
+                catSetup: (state) => {
+                    state.catSetup = true;
+                    document
+                        .querySelector("#target")
+                        .setAttribute("zappar-image", "enabled", "true");
+                    document
+                        .querySelector("#directorVideo")
+                        .emit("scaleDown");
+                },
+
+                directorPage: (state) => {
+                    window.location.replace("C_step1.html");
+                },
+
+                exit: (state) => {
+                    window.location.replace(
+                        "https://www.karikaturmuseum.at/de/programm/familien/ar-spiel/"
+                    );
+                },
+            },
+        });
+
+        // Component to launch GUI and audio when scene is ready
+        AFRAME.registerComponent("scene-start", {
+            init: function () {
+                var sceneEL = this.el;
+
+                let btn = document.querySelector("#start");
+                sceneEL.addEventListener("renderstart", () => {
+                    btn.emit("start");
+                });
+            },
+        });
+
+        // Component to control the visibility of AR content
+        AFRAME.registerComponent("visibility-changer", {
+            init: function () {
+                this.el.setAttribute("visible", false);
+                this.el.parentElement.addEventListener(
+                    "zappar-visible",
+                    () => {
+                        this.el.setAttribute("visible", true);
+                        AFRAME.scenes[0].emit("cat", null, false);
+                    }
+                );
+                this.el.parentElement.addEventListener(
+                    "zappar-notvisible",
+                    () => this.el.setAttribute("visible", false)
+                );
+            },
+        });
+
+        AFRAME.registerComponent("launch-step", {
+            schema: {
+                message: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                el.addEventListener("click", function () {
+                    el.sceneEl.emit(evt, null, true);
+                });
+            },
+        });
+
+        AFRAME.registerComponent("end-event", {
+            schema: {
+                message: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                el.addEventListener("sound-ended", function () {
+                    el.sceneEl.emit(evt, null, true);
+                });
+            },
+        });
+
+        AFRAME.registerComponent("video-end", {
+            init: function () {
+                var vid = this.el;
+                vid.addEventListener("materialvideoended", () => {
+                    AFRAME.scenes[0].emit("directorPage", null, true);
+                });
+            },
+        });
+
+        // Component to control the visibility of Mona Modal
+        AFRAME.registerComponent("launch-mona", {
+            init: function () {
+                var targetModal = new bootstrap.Modal(
+                    document.getElementById("mona"),
+                    {}
+                );
+                this.el.addEventListener("zappar-visible", () => {
+                    targetModal.toggle();
+                });
+            },
+        });
+    </script>
+</head>
+
+<body>
+    <a-scene vr-mode-ui="enabled: false" renderer="antialias: true; precision: high;" scene-start>
+        <!-- Ask user for camera permissions -->
+        <a-entity zappar-permissions-ui id="permissions"></a-entity>
+        <!-- Browser Compatibility -->
+        <a-entity zappar-compatibility-ui id="compatibility"></a-entity>
+
+        <!-- Assets -->
+        <a-assets>
+            <!-- Image Target -->
+            <a-asset-item id="anchor-1" src="./assets/anchors/Image_B5.zpt" />
+
+            <a-asset-item id="anchor-mona" src="./assets/anchors/Image_4_monainfo.zpt" />
+
+            <!-- Images -->
+            <img id="img01" src="assets/img/Image_1.png" />
+            <img id="img02" src="assets/img/Image_2.png" />
+            <img id="img03" src="assets/img/Image_3.png" />
+            <img id="img04" src="assets/img/door.png" />
+
+            <!-- Video -->
+            <video id="director" src="./assets/video/Video01_GameAustria.mp4" loop="false" preload="auto"
+                crossorigin="anonymous"></video>
+            <!-- Audio -->
+
+            <audio id="audio10" src="./assets/audio/Audio_10.mp3" preload="auto"></audio>
+            <audio id="audio03" src="./assets/audio/Audio_03.mp3" preload="auto"></audio>
+
+            <audio id="audio04" src="./assets/audio/Audio_04.mp3" preload="auto"></audio>
+            <audio id="audio07" src="./assets/audio/Audio_07.mp3" preload="auto"></audio>
+            <audio id="audio11" src="./assets/audio/Audio_11.mp3" preload="auto"></audio>
+
+            <audio id="audio12" src="./assets/audio/Audio_12.mp3" preload="auto"></audio>
+
+            <audio id="phone" src="./assets/sounds/cellphone-ringing.wav" preload="auto"></audio>
+            <!-- 3D -->
+            <a-asset-item id="cat" src="./assets/3D/Cat_Animations.gltf"></a-asset-item>
+        </a-assets>
+
+        <a-camera zappar-camera cursor="rayOrigin: mouse; fuse: false;" raycaster="objects: [raycastable]">
+            <!-- Start Button -->
+            <a-entity id="start" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Scanne noch einmal die Katzenpfote!; color: #000000; align: center; wrapCount: 15; lineHeight: 40; width:0.5;"
+                position="0 0 -5" scale="0 0 0" bind-toggle__raycastable="!step1"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: start; easing: easeOutElastic; delay: 2000"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Buttons -->
+            <a-entity position="0 -0.025 -0.1">
+                <a-entity class="btns" id="btn1" geometry="primitive: circle; radius: 0.7; segments: 64;"
+                    material="color: #fff" position="-0.018 0 0" scale="0 0 0"
+                    animation__scaleUp="property: scale; to: 0.01 0.01 0.01; dur: 500; startEvents: scaleUp; easing: easeOutElastic;"
+                    animation__scaleDown="property: scale; to: 0 0 0; dur: 500; startEvents: scaleDown; easing: easeInElastic;"
+                    animation__select="property: scale; to: 0.015 0.015 0.015; dur: 500; startEvents: option; easing: easeInCirc;"
+                    animation__select1="property: position; to: 0 0 0; startEvents: option; easing: easeInOutElastic;"
+                    bind-toggle__raycastable="showBtns" launch-step="message: option1">
+                    <a-image src="#img01" position="0 0 0.01"></a-image>
+                    <a-entity geometry="primitive: circle; radius: 0.8;segments: 64;" material="color: #0a9542"
+                        position="0 0 -0.001"></a-entity>
+                </a-entity>
+
+                <a-entity class="btns" id="btn2" geometry="primitive: circle; radius: 0.7" material="color: #fff"
+                    position="0 0 0" scale="0 0 0"
+                    animation__scaleUp="property: scale; to: 0.01 0.01 0.01; dur: 500; startEvents: scaleUp; easing: easeOutElastic; "
+                    animation__scaleDown="property: scale; to: 0 0 0; dur: 500; startEvents: scaleDown; easing: easeInElastic;"
+                    animation__select="property: scale; to: 0.015 0.015 0.015; dur: 500; startEvents: option; easing: easeInCirc;"
+                    animation__select1="property: position; to: 0 0 0; startEvents: option; easing: easeInOutCirc;"
+                    bind-toggle__raycastable="showBtns" launch-step="message: option2">
+                    <a-image src="#img02" position="0 0 0.01"></a-image>
+                    <a-entity geometry="primitive: circle; radius: 0.8; segments: 64;" material="color: #0a9542"
+                        position="0 0 -0.001"></a-entity>
+                </a-entity>
+
+                <a-entity class="btns" id="btn3" geometry="primitive: circle; radius: 0.7; segments: 64;"
+                    material="color: #fff" position="0.018 0 0" scale="0 0 0"
+                    animation__scaleUp="property: scale; to: 0.01 0.01 0.01; dur: 500; startEvents: scaleUp; easing: easeOutElastic;"
+                    animation__scaleDown="property: scale; to: 0 0 0; dur: 500; startEvents: scaleDown; easing: easeInElastic;"
+                    animation__select="property: scale; to: 0.015 0.015 0.015; dur: 500; startEvents: option; easing: easeInCirc;"
+                    animation__select1="property: position; to: 0 0 0; startEvents: option; easing: easeInOutCirc;"
+                    bind-toggle__raycastable="showBtns" launch-step="message: option3">
+                    <a-image src="#img03" position="0 0 0.01"></a-image>
+                    <a-entity geometry="primitive: circle; radius: 0.8; segments: 64;" material="color: #0a9542"
+                        position="0 0 -0.001"></a-entity>
+                </a-entity>
+
+                <a-rounded class="btns" id="exit" position="0 -0.018 0" width="1.3" height="0.3" radius="0.05"
+                    color="#fff" scale="0 0 0" bind-toggle__raycastable="showBtns" launch-step="message: exit"
+                    animation__scaleUp="property: scale; to: 0.04 0.04 0.04; dur: 500; startEvents: scaleUp; easing: easeOutElastic;"
+                    animation__scaleDown="property: scale; to: 0 0 0; dur: 500; startEvents: scaleDown; easing: easeInElastic;">
+                    <a-entity position="0 0.01 0"
+                        text="font: ./fonts/Avenir-Light-msdf.json; fontImage: ./fonts/Avenir-Light.png; negate: false; value: Ich schaue mir jetzt\nselbst das Museum an.; color: #000000; align: left; wrapCount: 25; lineHeight: 50; width:1.2;">
+                    </a-entity>
+                    <a-image src="#img04" position="0.5 0 0.001" scale="0.3 0.3 0.3"></a-image>
+                    <a-rounded position="0 0 0" width="1.34" height="0.34" radius="0.05" color="#ed008d"></a-rounded>
+                </a-rounded>
+            </a-entity>
+
+            <!-- Phone Button -->
+            <a-entity id="phoneBtn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Telefon abheben; color: #000000; align: center; wrapCount: 25; lineHeight: 35; width:0.8;"
+                position="0 0 -5" scale="0 0 0" bind-toggle__raycastable="phone"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: setup; easing: easeOutElastic; delay: 1000"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;"
+                launch-step="message: videoSetup">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+                <a-entity id="audioPhone" sound="src: #phone; volume: 0.3; loop: false;" position="0 0 0"
+                    autoplay="true"></a-entity>
+            </a-entity>
+
+            <!-- Video -->
+            <a-entity id="directorVideo" geometry="primitive: plane; width: 0.45; height: 0.8;"
+                material="src: #director" position="0 0 -1.5" scale="0 0 0"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 400; startEvents: setup; easing: easeOutBack; delay: 250"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeOutBack; delay: 250"
+                video-end></a-entity>
+        </a-camera>
+
+        <!-- SET UP OUR EXPERIENCE AS IMAGE TRACKING & GIVE IT AN IMAGE TO TRACK -->
+        <a-entity id="target" zappar-image="target: #anchor-1">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+            <a-entity id="content" visible="false" bind-toggle__visibility-changer="!cat">
+                <!-- PLACE 3D OBJECTS HERE TO TRACK FROM THE CENTER OF THE IMAGE -->
+                <!-- Introductory text-->
+                <a-entity id="cat3D" gltf-model="#cat" position="0 0 0" rotation="90 0 0" scale="1.5 1.5 1.5"
+                    animation-mixer="clip: Spin; crossFadeDuration: .3; loop: repeat; timeScale: 0;"></a-entity>
+                <a-entity id="audioCat10" sound="src: #audio10" position="0 0 0" loop="false"
+                    end-event="message: step3"></a-entity>
+                <a-entity id="audioCat03" sound="src: #audio03" position="0 0 0" loop="false"
+                    end-event="message: activity"></a-entity>
+                <a-entity id="catAudioA" sound="src: #audio04" position="0 0 0" loop="false" end-event="message: end">
+                </a-entity>
+                <a-entity id="catAudioB" sound="src: #audio07" position="0 0 0" loop="false" end-event="message: end">
+                </a-entity>
+                <a-entity id="catAudioC" sound="src: #audio11" position="0 0 0" loop="false" end-event="message: end">
+                </a-entity>
+                <a-entity id="audioCat12" sound="src: #audio12" position="0 0 0" loop="false"
+                    end-event="message: directorPage"></a-entity>
+            </a-entity>
+        </a-entity>
+
+        <a-entity id="mona-target" zappar-image="target: #anchor-mona" launch-mona>
+            <!-- Have a group that will only become visible when the target image comes into view-->
+        </a-entity>
+    </a-scene>
+
+    <!-- Modal Mona -->
+    <div class="modal fade" id="mona" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mona Project</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row gy-3">
+                            <p class="text-start">
+                                Dieses AR Spiel wurde im Zuge des Erasmus+
+                                Forschungsprojekts MONA entwickelt. Im
+                                Projekt MONA ging es darum den Schulbesuch
+                                im Museum durch neue experimentelle
+                                Anwendungen und Spiele zu einem
+                                atemberaubenden, charmanten und
+                                unterhaltsamen Erlebnis zu machen. Die
+                                Zielgruppen des Projektes sind Schulen und
+                                Familien. Das Konsortium des Projekts
+                                bestand aus vier Museen, zwei Schulen, zwei
+                                Universitäten und zwei technischen
+                                Einrichtungen aus vier europäischen Ländern.
+                            </p>
+                            <p>
+                                <small>Folgende Institutionen waren beteiligt:
+                                    <ul>
+                                        <li>
+                                            AKETH-DCT Entwicklungszentrum
+                                            von Thessalien in Griechenland
+                                        </li>
+                                        <li>
+                                            European Grants International
+                                            Academy (EGInA) in Italien
+                                        </li>
+                                        <li>
+                                            Forschungszentrum Museum
+                                            Vassilis Tsitsanis in
+                                            Griechenland
+                                        </li>
+                                        <li>
+                                            Hogeschool van Amsterdam (HvA)
+                                            in den Niederlanden
+                                        </li>
+                                        <li>
+                                            Humanistisches Gymnasium
+                                            Federico Frezzi-Beata Angela in
+                                            Italien
+                                        </li>
+                                        <li>
+                                            IMC Fachhochschule Krems in
+                                            Österreich
+                                        </li>
+                                        <li>
+                                            Karikaturmuseum Krems auf der
+                                            Kunstmeile Krems in Österreich
+                                        </li>
+                                        <li>
+                                            Musikschule Trikala in
+                                            Griechenland
+                                        </li>
+                                        <li>
+                                            NEMO Science Museum in den
+                                            Niederlanden
+                                        </li>
+                                        <li>
+                                            Palazzo Lucarini Contemporary in
+                                            Italien
+                                        </li>
+                                    </ul>
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Okay
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

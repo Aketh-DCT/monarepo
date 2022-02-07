@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-aframe/0.3.9/zappar-aframe.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+
+    <script src="./assets/js/aframe-rounded-component.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
+    <title>Caricature Step 1</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal.fade .modal-dialog {
+            -webkit-transition: -webkit-transform 0.3s ease-out;
+            -moz-transition: -moz-transform 0.3s ease-out;
+            -o-transition: -o-transform 0.3s ease-out;
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal-dialog iframe {
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+
+    <!-- AFrame Components -->
+    <script>
+        // State Machine
+        AFRAME.registerState({
+            initialState: {
+                start: true,
+                showInfo: false,
+                step1: false,
+                step2: false,
+                step3: false,
+                step4: false,
+                step5: false,
+                step6: false,
+                step7: false,
+                step8: false,
+                step9: false,
+            },
+
+            handlers: {
+                mapSetup: (state) => {
+                    document.querySelector("#start").emit("setup");
+                    document
+                        .querySelector("#audioIntro")
+                        .components.sound.playSound();
+                    document.querySelector("#intro").emit("setup");
+                    document.querySelector("#map").emit("setup");
+                    state.start = false;
+                    state.showInfo = true;
+                },
+
+                step1: (state) => {
+                    if (!state.step1) {
+                        document.querySelector("#intro").emit("scaleDown");
+                        document.querySelector("#map").emit("scaleDown");
+                        document
+                            .querySelector("#target")
+                            .setAttribute("zappar-image", "enabled", true);
+                        state.showInfo = false;
+                        state.step1 = true;
+                    }
+                },
+
+                step2: (state) => {
+                    if (!state.step2) {
+                        state.step2 = true;
+                        // show gui
+                        document
+                            .querySelector("#target")
+                            .setAttribute("zappar-image", "enabled: false");
+                        document.querySelector("#step1btn").emit("setup");
+                        document.querySelector("#step1text").emit("setup");
+                    }
+                },
+
+                step3: (state) => {
+                    if (!state.step3) {
+                        state.step3 = true;
+                        document
+                            .querySelector("#step1text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step1btn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step1text")
+                                .setAttribute("visible", false);
+                        }, 800);
+                        document
+                            .querySelector("#step3text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step3text").emit("setup");
+                    }
+                },
+
+                step4: (state) => {
+                    if (!state.step4) {
+                        state.step4 = true;
+                        document
+                            .querySelector("#step3text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step3btn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step3text")
+                                .setAttribute("visible", false);
+                        }, 800);
+                        document
+                            .querySelector("#step31text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step31text").emit("setup");
+                    }
+                },
+
+                step5: (state) => {
+                    if (!state.step5) {
+                        state.step5 = true;
+                        document
+                            .querySelector("#step31text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step31btn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step31text")
+                                .setAttribute("visible", false);
+                        }, 800);
+                        document
+                            .querySelector("#step5text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step5text").emit("setup");
+                    }
+                },
+
+                step8: (state) => {
+                    if (!state.step8) {
+                        state.step8 = true;
+                        document
+                            .querySelector("#step5text")
+                            .emit("slideOut");
+                        document
+                            .querySelector("#step5btn")
+                            .emit("scaleDown");
+                        setTimeout(() => {
+                            document
+                                .querySelector("#step5text")
+                                .setAttribute("visible", false);
+                        }, 800);
+                        document
+                            .querySelector("#step8text")
+                            .setAttribute("visible", true);
+                        document.querySelector("#step8text").emit("setup");
+                    }
+                },
+
+                step9: (state) => {
+                    if (!state.step9) {
+                        window.location.replace("./picture/index.html");
+                        state.step9 = true;
+                    }
+                },
+            },
+        });
+
+        // Component to launch GUI and audio when scene is ready
+        AFRAME.registerComponent("scene-start", {
+            init: function () {
+                var sceneEL = this.el;
+
+                let btn = document.querySelector("#start");
+                sceneEL.addEventListener("renderstart", () => {
+                    btn.emit("start");
+                });
+            },
+        });
+
+        // Component to control the visibility of AR content
+        AFRAME.registerComponent("visibility-changer", {
+            init: function () {
+                this.el.sceneEl.addEventListener("zappar-visible", () =>
+                    AFRAME.scenes[0].emit("step2", null, false)
+                );
+            },
+        });
+
+        // Component to trigger next step on click
+        AFRAME.registerComponent("launch-step", {
+            schema: {
+                message: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                el.addEventListener("click", function () {
+                    el.sceneEl.emit(evt, null, false);
+                });
+            },
+        });
+
+        // Component to trigger next step on audio end
+        AFRAME.registerComponent("end-event", {
+            schema: {
+                message: { type: "string" },
+            },
+            init: function () {
+                let el = this.el;
+                let evt = this.data.message;
+                el.addEventListener("sound-ended", function () {
+                    el.sceneEl.emit(evt, null, true);
+                });
+            },
+        });
+
+        // Component to control the visibility of Mona Modal
+        AFRAME.registerComponent("launch-mona", {
+            init: function () {
+                var targetModal = new bootstrap.Modal(
+                    document.getElementById("mona"),
+                    {}
+                );
+                this.el.addEventListener("zappar-visible", () => {
+                    targetModal.toggle();
+                });
+            },
+        });
+    </script>
+</head>
+
+<body>
+    <a-scene vr-mode-ui="enabled: false" renderer="antialias: true; precision: high;" scene-start>
+        <!-- Ask user for camera permissions -->
+        <a-entity zappar-permissions-ui id="permissions"></a-entity>
+        <!-- Browser Compatibility -->
+        <a-entity zappar-compatibility-ui id="compatibility"></a-entity>
+
+        <!-- Assets -->
+        <a-assets>
+            <!-- Image Target -->
+            <a-asset-item id="anchor-1" src="./assets/anchors/Image_B2.zpt" />
+
+            <a-asset-item id="anchor-mona" src="./assets/anchors/Image_4_monainfo.zpt" />
+            <!-- Images -->
+            <img id="imgB1" src="assets/img/Image_B1.png" />
+            <img id="imgB3" src="assets/img/Image_B3.png" />
+
+            <!-- Video -->
+
+            <!-- Audio -->
+            <audio id="audio08" src="./assets/audio/Audio_08.mp3" preload="auto"></audio>
+
+            <!-- 3D -->
+            <a-asset-item id="cat" src="./assets/3D/Cat_Animations.gltf"></a-asset-item>
+        </a-assets>
+
+        <a-camera zappar-camera cursor="rayOrigin: mouse; fuse: false;" raycaster="objects: [raycastable]">
+            <!-- Start Button -->
+            <a-entity id="start" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Start; color: #000000; align: center; wrapCount: 25; lineHeight: 35; width:0.8;"
+                position="0 0 -5" scale="0 0 0" bind-toggle__raycastable="start"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: start; easing: easeOutElastic; delay: 2000"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: setup; easing: easeInElastic;"
+                launch-step="message: mapSetup">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Map Button -->
+            <a-entity id="intro" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Pfotenabdruck\nscannen; color: #000000; align: center; wrapCount: 25; lineHeight: 35; width:0.8;"
+                position="0 -2 -5" scale="0 0 0" launch-step="message: step1;" bind-toggle__raycastable="showInfo"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: setup; easing: easeOutElastic; delay: 800"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Map -->
+            <a-entity id="map" geometry="primitive: plane; height: 0.9; width: 1.3; " material="color: #fff; opacity:0;"
+                position="0 1.9 -2.5"
+                animation__setup="property: position; to: 0 0.5 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; delay: 800"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;">
+                <a-rounded width="1.4" height="1" color="#ed008d" radius="0.05" position="0 0 -0.001" scale="1 1 1">
+                </a-rounded>
+                <a-rounded width="1.32" height="0.92" color="#fff" radius="0.04" position="0 0 0" scale="1 1 1">
+                </a-rounded>
+                <a-image src="#imgB1" width="1" height="0.704" position="0 0 0" scale="1.24 1.24 1.24"></a-image>
+            </a-entity>
+
+            <!-- Audio Instructions -->
+            <a-entity id="audioIntro" sound="src: #audio08" position="0 0 0" loop="false" autoplay="true"></a-entity>
+
+            <!-- Step 2 Button -->
+            <a-entity id="step1btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Los geht’s!; color: #000000; align: center; wrapCount: 25; lineHeight: 35; width:0.8;"
+                position="0 -2 -5" scale="0 0 0" bind-toggle__raycastable="step2" bind__visible="step2"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: setup; easing: easeOutElastic;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeOutCirc;"
+                launch-step="message: step3">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Step 2 Text -->
+            <a-entity id="step1text" geometry="primitive: plane; height: 1.6; width: 1.3; "
+                material="color: #fff; opacity:0;" position="1.5 0.5 -2.5"
+                animation__setup="property: position; to: 0 0.5 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.5 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;"
+                bind__visible="step2">
+                <a-image src="#imgB3" width="1.3" height="1.09" position="0 0.1 0">
+                    <a-entity geometry="primitive: plane; height: 0.9; width: 1.3;" width="auto" height="auto"
+                        material="color: #000; opacity: 0;"
+                        text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Werde selbst zur Karikatur!; color: #000000; align: left; wrapCount: 26; lineHeight: 50; width:1.1;"
+                        position="0 -0.7 0"></a-entity>
+                </a-image>
+                <a-rounded width="1.4" height="1.6" color="#ed008d" radius="0.05" position="0 0 -0.001" scale="1 1 1">
+                </a-rounded>
+                <a-rounded width="1.32" height="1.52" color="#fff" radius="0.04" position="0 0 0" scale="1 1 1">
+                </a-rounded>
+            </a-entity>
+
+            <!-- Step 3 Button -->
+            <a-entity id="step3btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Weiter; color: #000000; align: center; wrapCount: 25; lineHeight: 35; width:0.8;"
+                position="0 -2 -5" scale="2 2 2" bind-toggle__raycastable="step3" bind__visible="step3"
+                launch-step="message: step4"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: setup; easing: easeOutElastic;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeOutCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+            <!-- Step 3 Text -->
+            <a-rounded id="step3text" position="1.5 0.5 -2.5" width="1.3" height="1.6" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.5 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.5 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0.70 0"
+                    text="font: ./fonts/Avenir-MediumOblique-msdf.json; fontImage: ./fonts/Avenir-MediumOblique.png; negate: false; value: Die Karikatur; color: #000000; align: left; wrapCount: 26; lineHeight: 50; width:1.2;">
+                    <a-entity position="0 -0.7 0"
+                        text="font: ./fonts/Avenir-Light-msdf.json; fontImage: ./fonts/Avenir-Light.png; negate: false; value: Menschen, Tiere oder Dinge sind in Karikaturen &#252;bertrieben oder verzerrt dargestellt. \n\nDer Begriff Karikatur leitet sich vom italienischen Verb „caricare“ ab. Das bedeutet „beladen, &#252;bertreiben“ und geht auf den lateinischen Karren „carrus“ zur&#252;ck.; color: #000000; align: left; wrapCount: 26; lineHeight: 50; width:1.2;">
+                    </a-entity>
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.64" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+
+            <!-- Step 4 Button -->
+            <a-entity id="step31btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Weiter; color: #000000; align: center; wrapCount: 25; lineHeight: 35; width:0.8;"
+                position="0 -2 -5" scale="2 2 2" bind-toggle__raycastable="step4" bind__visible="step4"
+                launch-step="message: step5"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: setup; easing: easeOutElastic;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeOutCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Step 4 Text -->
+            <a-rounded id="step31text" position="1.5 0.8 -2.5" width="1.3" height="1" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.8 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.8 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/Avenir-Light-msdf.json; fontImage: ./fonts/Avenir-Light.png; negate: false; value: Aufgrund dieser speziellen Art der Darstellung sind die Zeichnungen humorvoll, sie regen aber auch zum Nachdenken an. So treffen in Karikaturen Humor und Kritik aufeinander.; color: #000000; align: left; wrapCount: 26; lineHeight: 50; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.04" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+
+            <!-- Step 5 Button -->
+            <a-entity id="step5btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Weiter; color: #000000; align: center; wrapCount: 25; lineHeight: 35; width:0.8;"
+                position="0 -2 -5" scale="2 2 2" bind-toggle__raycastable="step5" launch-step="message: step8"
+                bind__visible="step5"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: setup; easing: easeOutElastic;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeOutCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Step 5 Text -->
+            <a-rounded id="step5text" position="1.5 0.75 -2.5" width="1.3" height="1.1" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.75 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.75 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/Avenir-Light-msdf.json; fontImage: ./fonts/Avenir-Light.png; negate: false; value: Schau dir die lebensgro&#223;e Karikatur genauer an! Der Karikaturist Manfred Deix hat sich hier selbst karikiert. Welche K&#246;rperhaltung nimmt er ein? Wie wirkt sein Gesichtsausdruck auf dich? Was ist hier &#252;bertrieben dargestellt?; color: #000000; align: left; wrapCount: 26; lineHeight: 50; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.14" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+
+            <!-- Step 8 Button -->
+            <a-entity id="step8btn" geometry="primitive: circle; radius: 0.25; segments: 64;" material="color: #fff"
+                text="font: ./fonts/Avenir-LightOblique-msdf.json; fontImage: ./fonts/Avenir-LightOblique.png; negate: false; value: Ich bin bereit!; color: #000000; align: center; wrapCount: 25; lineHeight: 35; width:0.8;"
+                position="0 -2 -5" scale="2 2 2" bind-toggle__raycastable="step8" launch-step="message: step9"
+                bind__visible="step8"
+                animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: setup; easing: easeOutElastic;"
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeOutCirc;">
+                <a-entity geometry="primitive: circle; radius: 0.28; segments: 64;" material="color: #ed008d"
+                    position="0 0 -0.008">
+                </a-entity>
+            </a-entity>
+
+            <!-- Step 8 Text -->
+            <a-rounded id="step8text" position="1.5 0.75 -2.5" width="1.3" height="1.1" radius="0.05" visible="false"
+                animation__setup="property: position; to: 0 0.75 -2.5; dur: 800; startEvents: setup; easing: easeOutCirc; "
+                animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+                animation__out="property: position; to: -1.5 0.75 -2.5; dur: 800; startEvents: slideOut; easing: easeOutCirc;">
+                <a-entity position="0 0 0"
+                    text="font: ./fonts/Avenir-Light-msdf.json; fontImage: ./fonts/Avenir-Light.png; negate: false; value: Fehlt hier noch etwas? Werde selbst Teil der Karikatur! Platziere dich neben dem Stift von Manfred Deix. Probiere unterschiedliche Haltungen und Gesichtsausdr&#252;cke aus. W&auml;hle deine perfekte Pose und bitte jemanden die Szene zu fotografieren!; color: #000000; align: left; wrapCount: 26; lineHeight: 50; width:1.2;">
+                </a-entity>
+
+                <a-rounded position="0 0 0" width="1.34" height="1.14" radius="0.05" color="#ed008d"></a-rounded>
+            </a-rounded>
+        </a-camera>
+
+        <!-- SET UP OUR EXPERIENCE AS IMAGE TRACKING & GIVE IT AN IMAGE TO TRACK -->
+        <a-entity id="target" zappar-image="target: #anchor-1; enabled: false;" bind_toggle__visibility-changer="step">
+            <!-- Have a group that will only become visible when the target image comes into view-->
+        </a-entity>
+
+        <!-- Mona Anchor -->
+        <a-entity id="mona-target" zappar-image="target: #anchor-mona" launch-mona>
+        </a-entity>
+    </a-scene>
+
+    <!-- Modal Mona -->
+    <div class="modal fade" id="mona" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mona Project</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row gy-3">
+                            <p class="text-start">
+                                Dieses AR Spiel wurde im Zuge des Erasmus+
+                                Forschungsprojekts MONA entwickelt. Im
+                                Projekt MONA ging es darum den Schulbesuch
+                                im Museum durch neue experimentelle
+                                Anwendungen und Spiele zu einem
+                                atemberaubenden, charmanten und
+                                unterhaltsamen Erlebnis zu machen. Die
+                                Zielgruppen des Projektes sind Schulen und
+                                Familien. Das Konsortium des Projekts
+                                bestand aus vier Museen, zwei Schulen, zwei
+                                Universitäten und zwei technischen
+                                Einrichtungen aus vier europäischen Ländern.
+                            </p>
+                            <p>
+                                <small>Folgende Institutionen waren beteiligt:
+                                    <ul>
+                                        <li>
+                                            AKETH-DCT Entwicklungszentrum
+                                            von Thessalien in Griechenland
+                                        </li>
+                                        <li>
+                                            European Grants International
+                                            Academy (EGInA) in Italien
+                                        </li>
+                                        <li>
+                                            Forschungszentrum Museum
+                                            Vassilis Tsitsanis in
+                                            Griechenland
+                                        </li>
+                                        <li>
+                                            Hogeschool van Amsterdam (HvA)
+                                            in den Niederlanden
+                                        </li>
+                                        <li>
+                                            Humanistisches Gymnasium
+                                            Federico Frezzi-Beata Angela in
+                                            Italien
+                                        </li>
+                                        <li>
+                                            IMC Fachhochschule Krems in
+                                            Österreich
+                                        </li>
+                                        <li>
+                                            Karikaturmuseum Krems auf der
+                                            Kunstmeile Krems in Österreich
+                                        </li>
+                                        <li>
+                                            Musikschule Trikala in
+                                            Griechenland
+                                        </li>
+                                        <li>
+                                            NEMO Science Museum in den
+                                            Niederlanden
+                                        </li>
+                                        <li>
+                                            Palazzo Lucarini Contemporary in
+                                            Italien
+                                        </li>
+                                    </ul>
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                        Okay
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
