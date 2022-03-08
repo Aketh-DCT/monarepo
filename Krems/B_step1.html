@@ -73,13 +73,14 @@
 
                 step1: (state) => {
                     if (!state.step1) {
+                        state.step1 = true;
                         document.querySelector("#intro").emit("scaleDown");
                         document.querySelector("#map").emit("scaleDown");
                         document
                             .querySelector("#target")
                             .setAttribute("zappar-image", "enabled", true);
                         state.showInfo = false;
-                        state.step1 = true;
+
                     }
                 },
 
@@ -448,13 +449,13 @@
         </a-camera>
 
         <!-- SET UP OUR EXPERIENCE AS IMAGE TRACKING & GIVE IT AN IMAGE TO TRACK -->
-        <a-entity id="target" zappar-image="target: #anchor-1; enabled: false;" bind_toggle__visibility-changer="step">
+        <a-entity id="target" zappar-image="target: #anchor-1; enabled: false;" visibility-changer>
             <!-- Have a group that will only become visible when the target image comes into view-->
         </a-entity>
 
         <!-- Mona Anchor -->
-        <a-entity id="mona-target" zappar-image="target: #anchor-mona" launch-mona>
-        </a-entity>
+        <!-- <a-entity id="mona-target" zappar-image="target: #anchor-mona" launch-mona>
+        </a-entity> -->
     </a-scene>
 
     <!-- Modal Mona -->
