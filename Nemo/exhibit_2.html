@@ -122,9 +122,9 @@
                             .querySelector("#modelTxt")
                             .emit("scaleUp", null, false);
 
-                        document
+                        /* document
                             .querySelector("#backBtn")
-                            .emit("scaleUp", null, false);
+                            .emit("scaleUp", null, false); */
                     }, 400);
 
                     state.backBtn = true;
@@ -216,11 +216,20 @@
                     "zappar-visible",
                     () => {
                         this.el.setAttribute("visible", true);
+                        setTimeout(function () {
+                            document
+                                .querySelector("#modelTxt")
+                                .emit("scaleDown", null, false);
+
+                            document
+                                .querySelector("#backBtn")
+                                .emit("scaleUp", null, false);
+                        }, 200);
                     }
                 );
                 this.el.parentElement.addEventListener(
                     "zappar-notvisible",
-                    () => this.el.setAttribute("visible", false)
+                    () => { this.el.setAttribute("visible", false); }
                 );
             },
             remove: function () {
@@ -478,13 +487,14 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Lees: Wimshurst Machine</h5>
+                    <h5 class="modal-title">Probeer de exhibit.</h5>
                 </div>
                 <div class="modal-body">
                     <div class="container">
                         <div class="row gy-3">
                             <p class="text-start">
-                                Probeer de exhibit.
+                                Probeer de exhibit Elektrische kus en bekijk het filmpje over de geschiedenis van
+                                elektriciteit.
                             </p>
                         </div>
                     </div>
@@ -503,14 +513,13 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Probeer de exhibit</h5>
+                    <h5 class="modal-title">Foto-opdracht</h5>
                 </div>
                 <div class="modal-body">
                     <div class="container">
                         <div class="row gy-3">
                             <p class="text-start">
-                                Maak een foto van de Wimshurst-machine en
-                                voeg wat informatie over de exhibit toe.
+                                Maak een foto van de WImshurst-machine.
                             </p>
                         </div>
                     </div>

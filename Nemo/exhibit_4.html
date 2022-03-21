@@ -114,9 +114,9 @@
                             .querySelector("#modelTxt")
                             .emit("scaleUp", null, false);
 
-                        document
+                        /* document
                             .querySelector("#backBtn")
-                            .emit("scaleUp", null, false);
+                            .emit("scaleUp", null, false); */
                     }, 400);
 
                     state.backBtn = true;
@@ -157,9 +157,9 @@
                             .querySelector("#modelTxt2")
                             .emit("scaleUp", null, false);
 
-                        document
+                        /* document
                             .querySelector("#backBtn2")
-                            .emit("scaleUp", null, false);
+                            .emit("scaleUp", null, false); */
                     }, 400);
 
                     state.backBtn2 = true;
@@ -280,6 +280,15 @@
                     "zappar-visible",
                     () => {
                         this.el.setAttribute("visible", true);
+                        setTimeout(function () {
+                            document
+                                .querySelector("#modelTxt")
+                                .emit("scaleDown", null, false);
+
+                            document
+                                .querySelector("#backBtn")
+                                .emit("scaleUp", null, false);
+                        }, 200);
                         console.log(this.el);
                     }
                 );
@@ -300,6 +309,15 @@
                     "zappar-visible",
                     () => {
                         this.el.setAttribute("visible", true);
+                        setTimeout(function () {
+                            document
+                                .querySelector("#modelTxt2")
+                                .emit("scaleDown", null, false);
+
+                            document
+                                .querySelector("#backBtn2")
+                                .emit("scaleUp", null, false);
+                        }, 200);
                         console.log(this.el);
                     }
                 );
@@ -506,7 +524,7 @@
         <!-- 3D model group -->
         <a-entity id="model-tracker-2" zappar-image="target: #modelAnchor; enabled: false;">
             <!-- PLACE CONTENT TO APPEAR ON THE IMAGE HERE -->
-            <a-entity id="model-container-2" bind-toggle__visibility-changer-2="backBtn2" visible="false">
+            <a-entity id="model-container-2" bind-toggle__visibility-changer-3="backBtn2" visible="false">
                 <a-entity id="parrot3D" gltf-model="#parrot" scale="0.2 0.2 0.2" rotation="90 0 0"
                     animation-mixer="clip: *">
                 </a-entity>
@@ -523,8 +541,7 @@
                     bind-toggle__raycastable="!mainUI" launch-step="message: mainUI">
                     <a-entity mixin="bigCircle mainClr" position="0 0 -0.001" scale="1.1 1.1 1.1">
                     </a-entity>
-                    <a-entity gltf-model="#first" position="0 0 0.5" scale="10 10 10"
-                        animation="property: rotation; from: 90 0 0; to: 90 360 0; dur:10000; loop: true; easing: linear ">
+                    <a-entity gltf-model="#first" position="0.1 -0.30 0.5" scale="10 10 10" rotation="90 0 0">
                     </a-entity>
                 </a-entity>
             </a-entity>
@@ -564,7 +581,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Bekijk de gallerij</h5>
+                    <h5 class="modal-title">Doe: Bekijk de gallerij</h5>
                 </div>
                 <div class="modal-body">
                     <div clas="container">
@@ -628,13 +645,13 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Opdracht</h5>
+                    <h5 class="modal-title">Foto-opdracht</h5>
                 </div>
                 <div class="modal-body">
                     <div clas="container">
                         <div class="row gy-3">
                             <p class="text-start">
-                                Neem een foto of teken een voorwerp waar je niet zonder kunt leven.
+                                Neem een foto van een voorwerp waar je niet zonder kunt leven.
                             </p>
                         </div>
                     </div>
