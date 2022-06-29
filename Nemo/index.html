@@ -7,8 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://libs.zappar.com/zappar-aframe/0.3.9/zappar-aframe.js"></script>
-    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-aframe/0.3.36/zappar-aframe.js"></script>
     <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
 
     <link
@@ -48,6 +47,9 @@
     <!-- AFrame Components -->
     <script>
       window.localStorage["nemo_state"] = "Exhibit1";
+      //sessionStorage.clear();
+      //sessionStorage.setItem("destination", "./exhibit_2.html");
+      //sessionStorage.setItem("saved", "false");
 
       // State Machine
       AFRAME.registerState({
@@ -136,7 +138,6 @@
             modelTracker.setAttribute("zappar-image", "enabled", false);
 
             setTimeout(function () {
-              //your code to be executed after 1 second
               document.querySelector("#container").emit("scaleUp", null, false);
             }, 400);
 
@@ -277,7 +278,7 @@
 
         <!-- Color Mixins -->
         <a-mixin id="mainClr" material="color: #ed008d"></a-mixin>
-        <a-mixin id="secondClr" material="color: red"></a-mixin>
+        <a-mixin id="secondClr" material="color: #00E63C"></a-mixin>
         <a-mixin id="accentClr" material="color: red"></a-mixin>
         <a-mixin id="bgClr" material="color: white"></a-mixin>
 
@@ -349,7 +350,7 @@
               scale="0 0 0"
             >
               <a-entity
-                mixin="bigCircle accentClr"
+                mixin="bigCircle mainClr"
                 position="0 0 -0.001"
                 scale="1.1 1.1 1.1"
               >
@@ -450,7 +451,7 @@
           launch-step="message: exit;"
         >
           <a-entity
-            mixin="midCircle accentClr"
+            mixin="midCircle mainClr"
             position="0 0 -0.001"
             scale="1.1 1.1 1.1"
           >
@@ -459,18 +460,18 @@
 
         <a-entity
           id="modelTxt"
-          geometry="primitive: plane; width: 2.5; height: 1.05; "
+          geometry="primitive: plane; width: 2.5; height: 0.75; "
           mixin="bgClr"
           animation="property: scale; to: 1 1 1; dur: 400; startEvents: scaleUp; easing: easeInElastic;"
           animation__2="property: scale; to: 0 0 0; dur: 100; startEvents: scaleDown; easing: easeInElastic;"
-          text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Zoek de sticker, scan hem en bekijk de wimshurst-machine in AR.; color: #000000; align: left; wrapCount: 30; lineHeight: 40; width: 2.2"
-          position="0 2.05 -5"
+          text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Zoek de sticker, scan en bekijk de bliksem in AR.; color: #000000; align: left; wrapCount: 30; lineHeight: 40; width: 2.2"
+          position="0 2.2 -5"
           scale="0 0 0"
           visible="true"
         >
           <a-entity
-            geometry="primitive: plane; width: 2.6; height: 1.15; "
-            mixin="midCircle mainClr"
+            geometry="primitive: plane; width: 2.6; height: 0.85; "
+            mixin="mainClr"
             position="0 0 -0.001"
           >
           </a-entity>
@@ -665,7 +666,7 @@
             <h5 class="modal-title">Lees: Statische elektriciteit</h5>
           </div>
           <div class="modal-body">
-            <div clas="container">
+            <div class="container">
               <div class="row gy-3">
                 <img src="assets/img/1.3.gif" class="img-fluid" />
 

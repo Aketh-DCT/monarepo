@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-aframe/0.3.36/zappar-aframe.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-sharing/1.1.5/zappar-sharing.min.js"></script>
+    <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <title>Maak en foto</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .modal.fade .modal-dialog {
+        -webkit-transition: -webkit-transform 0.3s ease-out;
+        -moz-transition: -moz-transform 0.3s ease-out;
+        -o-transition: -o-transform 0.3s ease-out;
+        transition: transform 0.3s ease-out;
+      }
+
+      .modal-dialog iframe {
+        margin: 0 auto;
+        display: block;
+      }
+
+      .visible {
+        visibility: visible !important;
+      }
+      .invisible {
+        visibility: hidden !important;
+      }
+
+      .btn-primary {
+        background-color: #ed008d;
+      }
+    </style>
+
+    <script>
+      AFRAME.registerComponent("snap", {
+        init: function () {
+          let el = this.el;
+
+          el.addEventListener("click", function () {
+            // Hide button
+            document
+              .querySelector("#photoBtn")
+              .setAttribute("visible", "false");
+
+            // Set width and height of picture according to camera view
+            document.querySelector("a-scene").setAttribute("screenshot", {
+              width: window.innerWidth,
+              height: window.innerHeight,
+            });
+
+            // Get canvas from dom
+            let canvas = document
+              .querySelector("a-scene")
+              .components.screenshot.getCanvas("perspective");
+
+            // Get canvas from dom
+            //const canvas = document.querySelector("canvas");
+
+            // Convert canvas data to url
+            const url = canvas.toDataURL("image/jpeg", 1);
+
+            //document.getElementById("preview").setAttribute("src", url);
+
+            var targetModal = new bootstrap.Modal(
+              document.getElementById("modal-end"),
+              {}
+            );
+
+            document
+              .querySelector("a-scene")
+              .components.screenshot.capture("perspective");
+            document.getElementById("destination").href =
+              sessionStorage.getItem("destination");
+            targetModal.toggle();
+
+            document.querySelector("#photoBtn").setAttribute("visible", "true");
+
+            /* ZapparSharing(
+              {
+                data: url,
+                fileNamePrepend: "Nemo" + "_1", // The name of  the file.
+                hideShareButton: true, // Hide the share button.
+                onSave: () => {
+                  console.log("Image was saved");
+                  sessionStorage.setItem("saved", "true");
+
+                  var savedState = JSON.parse(sessionStorage.getItem("saved"));
+                  document.getElementById("destination").href =
+                    sessionStorage.getItem("destination");
+                  if (savedState === true) {
+                    targetModal.toggle();
+                  }
+                },
+                onShare: () => {
+                  console.log("Share button was pressed");
+                },
+                onClose: () => {
+                  console.log("Dialog was closed");
+                  //var savedState = JSON.parse(sessionStorage.getItem("saved"));
+                  //if (savedState === true) {
+                  //  targetModal.toggle();
+                  //}
+
+                  document
+                    .querySelector("#photoBtn")
+                    .setAttribute("visible", "true");
+                  document.getElementById("destination").href =
+                    sessionStorage.getItem("destination");
+                },
+              },
+              {
+                saveShareAnchor: {
+                  display: "flex",
+                  width: "250px",
+                  height: "85px",
+                  marginTop: "1.5%",
+                  marginLeft: "5%",
+                  marginRight: "5%",
+                },
+              },
+              {
+                SAVE: "Sla op om verder te gaan",
+                SHARE: "SHARE",
+              }
+             ); */
+          });
+        },
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene
+      vr-mode-ui="enabled: false"
+      renderer="antialias: true; precision: high;"
+      ><!-- Ask user for camera permissions -->
+      <a-entity zappar-permissions-ui id="permissions"></a-entity>
+      <!-- Browser Compatibility -->
+      <a-entity zappar-compatibility-ui id="compatibility"></a-entity>
+      <a-camera
+        zappar-camera
+        cursor="rayOrigin: mouse; fuse: false;"
+        raycaster="objects: [raycastable]"
+      >
+        <a-entity
+          id="photoBtn"
+          geometry="primitive: circle; radius: 0.25; segments: 64;"
+          material="color: #fff"
+          text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Snap; color: #000000; align: center; wrapCount: 20; lineHeight: 30; width: 1;"
+          position="0 -2 -5"
+          scale="2 2 2"
+          raycastable
+          snap
+          animation__scaleUp="property: scale; to: 2 2 2; dur: 800; startEvents: start; easing: easeOutElastic;"
+          animation__scaleDown="property: scale; to: 0 0 0; dur: 800; startEvents: scaleDown; easing: easeInElastic;"
+        >
+          <a-entity
+            geometry="primitive: circle; radius: 0.28; segments: 64;"
+            material="color: #ed008d"
+            position="0 0 -0.008"
+          >
+          </a-entity>
+        </a-entity>
+      </a-camera>
+    </a-scene>
+
+    <!-- Modal  - Challenge -->
+    <div
+      class="modal fade"
+      id="modal-end"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Foto-opdracht</h5>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid">
+              <!-- <div class="row h-50 d-inline-block">
+                <img id="preview" src="" />
+              </div> -->
+
+              <div class="row mt-2">
+                <div class="col">
+                  <p class="fs-4">Neem nog een foto of ga verder!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Nog een foto
+            </button>
+
+            <a id="destination" class="btn btn-primary" href="" role="button">
+              <!-- Modal 1-4 - Challenge -->
+              Ga verder!
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

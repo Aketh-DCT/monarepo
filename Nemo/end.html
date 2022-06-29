@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-aframe/0.3.9/zappar-aframe.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <title>Timeline History</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .modal.fade .modal-dialog {
+        -webkit-transition: -webkit-transform 0.3s ease-out;
+        -moz-transition: -moz-transform 0.3s ease-out;
+        -o-transition: -o-transform 0.3s ease-out;
+        transition: transform 0.3s ease-out;
+      }
+
+      .modal-dialog iframe {
+        margin: 0 auto;
+        display: block;
+      }
+
+      .btn-primary {
+        background-color: #ed008d;
+      }
+    </style>
+
+    <!-- AFrame Components -->
+    <script>
+      //window.localStorage["nemo_state"] = "Exhibit1";
+      sessionStorage.clear();
+      sessionStorage.setItem("destination", "./exhibit_2.html");
+      sessionStorage.setItem("saved", "false");
+
+      // State Machine
+      AFRAME.registerState({
+        initialState: {
+          end: false,
+        },
+
+        handlers: {
+          end: (state) => {
+            window.location.assign(
+              "https://www.nemosciencemuseum.nl/nl/ontdek/"
+            );
+          },
+        },
+      });
+
+      // Component to trigger next step on click
+      AFRAME.registerComponent("launch-step", {
+        schema: {
+          message: { type: "string" },
+        },
+        init: function () {
+          let el = this.el;
+          let evt = this.data.message;
+          el.addEventListener("click", function () {
+            el.sceneEl.emit(evt, null, true);
+          });
+        },
+      });
+    </script>
+  </head>
+
+  <body>
+    <a-scene
+      renderer="antialias: true; colorManagement: true; alpha: false;"
+      vr-mode-ui="enabled: false"
+    >
+      <!-- Ask user for camera permissions -->
+      <a-entity zappar-permissions-ui id="permissions"></a-entity>
+      <!-- Browser Compatibility -->
+      <a-entity zappar-compatibility-ui id="compatibility"></a-entity>
+      <!-- Assets -->
+      <a-assets>
+        <!-- Image Target -->
+        <a-asset-item id="exhibit-1" src="./assets/anchors/1-1.zpt" />
+        <a-asset-item id="modelAnchor" src="./assets/anchors/idea2-01.zpt" />
+
+        <!-- Images -->
+        <img id="nav1" src="assets/img/nav1.png" />
+        <img id="next" src="assets/img/next.png" />
+        <img id="idea" src="assets/img/idea.png" />
+        <img id="3D" src="assets/img/3d.png" />
+        <img id="end" src="assets/img/finish.png" />
+
+        <!-- 3D -->
+        <a-asset-item
+          id="lightning"
+          src="./assets/3D/Lightning.glb"
+        ></a-asset-item>
+
+        <a-asset-item
+          id="lightning2"
+          src="./assets/3D/Lightning-1.gltf"
+        ></a-asset-item>
+
+        <!-- Animation Mixins -->
+        <a-mixin
+          id="scaleDownAnim"
+          animation="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;"
+        >
+        </a-mixin>
+        <a-mixin
+          id="scaleUpAnim"
+          animation="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeInElastic;"
+        >
+        </a-mixin>
+
+        <!-- Color Mixins -->
+        <a-mixin id="mainClr" material="color: #ed008d"></a-mixin>
+        <a-mixin id="secondClr" material="color: #ed008d"></a-mixin>
+        <a-mixin id="accentClr" material="color: #ed008d"></a-mixin>
+        <a-mixin id="bgClr" material="color: white"></a-mixin>
+
+        <!-- Shape Mixins -->
+        <a-mixin
+          id="bigCircle"
+          geometry="primitive: circle; radius: 1; segments: 128;"
+        ></a-mixin>
+        <a-mixin
+          id="midCircle"
+          geometry="primitive: circle;radius: 0.5; segments: 64;"
+        ></a-mixin>
+        <a-mixin
+          id="smlCircle"
+          geometry="primitive: circle;radius: 0.25; segments: 64;"
+        ></a-mixin>
+      </a-assets>
+
+      <a-entity
+        camera
+        zappar-camera
+        cursor="rayOrigin: mouse; fuse: false;"
+        raycaster="objects: [raycastable]"
+      >
+        <!-- Main UI -->
+        <a-entity
+          id="container"
+          visible="true"
+          animation="property: scale; to: 1 1 1; dur: 400; startEvents: scaleUp; easing: easeOutExpo;"
+          animation__2="property: scale; to: 0 0 0; dur: 400; startEvents: scaleDown; easing: easeInElastic;"
+        >
+          <a-entity scale="4 4 4">
+            <a-entity
+              id="mainUI"
+              mixin="bigCircle bgClr scaleDownAnim scaleUpAnim"
+              text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Klaar!\n\nJe hebt bij vier exhibits informatie voor je tijdlijn over elektriciteit gevonden.\nOp school kan je je tijdlijn afmaken. Kijk rond in NEMO om meer info over elektriciteit te vinden!\n\nVeel plezier.; color: #000000; align: center; wrapCount: 25; lineHeight: 55; width: 1.6;"
+              position="0 0.8 -4"
+              scale="1 1 1"
+            >
+              <a-entity
+                mixin="bigCircle accentClr"
+                position="0 0 -0.001"
+                scale="1.1 1.1 1.1"
+              >
+              </a-entity>
+            </a-entity>
+          </a-entity>
+
+          <a-entity
+            mixin="smlCircle bgClr scaleDownAnim scaleUpAnim"
+            position="0 -0.8 -4"
+            scale="1 1 1"
+            raycastable
+            launch-step="message: end"
+          >
+            <a-image
+              src="#end"
+              position="0 -0.01 0.001"
+              scale="0.4 0.4 0.4"
+            ></a-image>
+            <a-entity
+              mixin="smlCircle mainClr"
+              position="0 0 -0.001"
+              scale="1.2 1.2 1.2"
+            ></a-entity>
+          </a-entity>
+        </a-entity>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
