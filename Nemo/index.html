@@ -47,9 +47,6 @@
     <!-- AFrame Components -->
     <script>
       window.localStorage["nemo_state"] = "Exhibit1";
-      //sessionStorage.clear();
-      //sessionStorage.setItem("destination", "./exhibit_2.html");
-      //sessionStorage.setItem("saved", "false");
 
       // State Machine
       AFRAME.registerState({
@@ -92,8 +89,8 @@
           task1: (state) => {
             state.task1 = true;
             if (state.task1 && state.task2 && state.task3) {
-              state.showChallenge = true;
-              //AFRAME.scenes[0].emit("showChallenge", null, false);
+              //state.showChallenge = true;
+              AFRAME.scenes[0].emit("showChallenge", null, false);
             }
 
             document.querySelector("#container").emit("scaleDown", null, false);
@@ -149,7 +146,7 @@
             }
           },
 
-          showChallenge: function (state) {
+          showChallenge: (state) => {
             state.showChallenge = true;
           },
 

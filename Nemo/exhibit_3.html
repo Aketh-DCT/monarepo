@@ -48,9 +48,6 @@
     <!-- AFrame Components -->
     <script>
       window.localStorage["nemo_state"] = "Exhibit3";
-      //sessionStorage.clear();
-      //sessionStorage.setItem("destination", "./exhibit_4.html");
-      //sessionStorage.setItem("saved", "false");
 
       // State Machine
       AFRAME.registerState({
@@ -82,8 +79,6 @@
           mainUI: (state) => {
             if (!state.mainUI) {
               document.querySelector("#intro3D").emit("scaleDown", null, false);
-              document.querySelector("#intro3D").classList.remove("collidable");
-
               document
                 .querySelector("#anchor")
                 .setAttribute("zappar-image", "enabled", false);
@@ -91,18 +86,17 @@
               var els = document.querySelectorAll(".btns");
               for (var i = 0; i < els.length; i++) {
                 els[i].emit("scaleUp", null, false);
-                els[i].classList.add("collidable");
               }
               state.mainUI = true;
             }
           },
 
           task1: (state) => {
+            state.task1 = true;
+            state.backBtn = true;
+            state.mainUI = false;
+
             document.querySelector("#container").emit("scaleDown", null, false);
-            var els = document.querySelectorAll(".btns");
-            for (var i = 0; i < els.length; i++) {
-              els[i].classList.remove("collidable");
-            }
 
             var anchor = document.querySelector("#anchor");
             anchor.setAttribute("zappar-image", "enabled", false);
@@ -112,46 +106,44 @@
 
             setTimeout(function () {
               document.querySelector("#modelTxt").emit("scaleUp", null, false);
-              document.querySelector("#backBtn").classList.add("collidable");
 
               /* document
                             .querySelector("#backBtn")
                             .emit("scaleUp", null, false); */
             }, 400);
 
-            state.backBtn = true;
-            state.mainUI = false;
-            state.task1 = true;
+            console.log(state.showChallenge);
           },
 
           task2: (state) => {
             state.task2 = true;
             if (state.task1 && state.task2 && state.task3) {
-              state.showChallenge = true;
-              //AFRAME.scenes[0].emit("showChallenge", null, false);
-              var raycasterEl = AFRAME.scenes[0].querySelector("[raycaster]");
-              raycasterEl.components.raycaster.refreshObjects();
+              //state.showChallenge = true;
+              AFRAME.scenes[0].emit("showChallenge", null, false);
             }
+            console.log(state.showChallenge);
           },
 
           task3: (state) => {
             state.task3 = true;
             if (state.task1 && state.task2 && state.task3) {
-              state.showChallenge = true;
-              //AFRAME.scenes[0].emit("showChallenge", null, false);
-              var raycasterEl = AFRAME.scenes[0].querySelector("[raycaster]");
-              raycasterEl.components.raycaster.refreshObjects();
+              //state.showChallenge = true;
+              AFRAME.scenes[0].emit("showChallenge", null, false);
             }
+            console.log(state.showChallenge);
           },
 
-          task4: (state) => {},
+          task4: (state) => {
+            console.log(state.showChallenge);
+            //alert("it works!");
+          },
 
           exit: (state) => {
             document.querySelector("#modelTxt").emit("scaleDown", null, false);
 
             document.querySelector("#backBtn").emit("scaleDown", null, false);
-            document.querySelector("#backBtn").classList.remove("collidable");
-            let modelTracker = document.querySelector("#model-tracker");
+
+            var modelTracker = document.querySelector("#model-tracker");
 
             modelTracker.setAttribute("zappar-image", "enabled", false);
 
@@ -159,25 +151,37 @@
               document.querySelector("#container").emit("scaleUp", null, false);
             }, 400);
 
-            state.mainUI = true;
             state.backBtn = false;
+            state.mainUI = true;
 
             if (state.task1 && state.task2 && state.task3) {
-              AFRAME.scenes[0].emit("showChallenge", null, false);
-              document.querySelector("#chlngBtn").classList.add("collidable");
-            }
+              //state.showChallenge = true;
 
-            var els = document.querySelectorAll(".btns");
-            for (var i = 0; i < els.length; i++) {
-              els[i].classList.add("collidable");
+              AFRAME.scenes[0].emit("showChallenge");
             }
+            console.log(state.showChallenge);
           },
 
-          showChallenge: function (state) {
+          showChallenge: (state) => {
             state.showChallenge = true;
+            document.querySelector("#chlngBtn").setAttribute("raycastable", "");
           },
 
           next: (state) => {},
+        },
+      });
+
+      /**
+       * Couple visibility and raycastability.
+       */
+      AFRAME.registerComponent("visible-raycastable", {
+        update: function () {
+          this.el.object3D.visible = this.data;
+          if (this.data) {
+            this.el.setAttribute("raycastable", "");
+          } else {
+            this.el.removeAttribute("raycastable", "");
+          }
         },
       });
 
@@ -326,7 +330,7 @@
       <a-entity
         camera
         zappar-camera
-        raycaster="objects: .collidable"
+        raycaster="objects: [raycastable]"
         cursor="rayOrigin: mouse; fuse: false;"
       >
         <!-- Intro Block -->
@@ -391,6 +395,7 @@
             scale="0 0 0"
             launch-step="message: task1;"
             animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeInElastic; delay: 400"
+            bind-toggle__raycastable="mainUI"
           >
             <a-image
               src="#3D"
@@ -411,6 +416,7 @@
             scale="0 0 0"
             launch-challenge="message: task2; modal: modal-2;"
             animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeInElastic; delay: 200"
+            bind-toggle__raycastable="mainUI"
           >
             <a-image
               src="#idea"
@@ -431,6 +437,7 @@
             scale="0 0 0"
             launch-challenge="message: task3; modal: modal-3;"
             animation__scaleUp="property: scale; to: 1 1 1; dur: 800; startEvents: scaleUp; easing: easeInElastic; delay: 400"
+            bind-toggle__raycastable="mainUI"
           >
             <a-image
               src="#idea"
@@ -449,7 +456,7 @@
             mixin="smlCircle bgClr scaleDownAnim"
             position="0 -0.8 -4"
             scale="1 1 1"
-            bind="visible: showChallenge"
+            bind__visible="showChallenge"
             launch-challenge="message: task4; modal: modal-4;"
           >
             <a-image
@@ -473,7 +480,8 @@
           text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Verder; color: #000000; align: center; wrapCount: 10; lineHeight: 70; width: 1;"
           position="0 -2 -5"
           scale="0 0 0"
-          visible="true"
+          bind="visible: backBtn"
+          bind-toggle__raycastable="backBtn"
           launch-step="message: exit;"
         >
           <a-entity
@@ -531,11 +539,11 @@
           <!-- PLACE 3D OBJECTS HERE TO TRACK FROM THE CENTER OF THE IMAGE -->
           <!-- Introductory 3D-->
           <a-entity
-            class="collidable"
             id="intro3D"
             mixin="bigCircle bgClr scaleDownAnim scaleUpAnim"
             position="0 0 0"
             scale="0 0 0"
+            bind-toggle__raycastable="showUI"
             launch-step="message: mainUI"
           >
             <a-entity
@@ -701,7 +709,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <!-- Noor Use this link to redirect to the Photo Application -->
+            <!-- Link to camera App -->
             <a
               class="btn btn-primary"
               href="./picture/index.html"

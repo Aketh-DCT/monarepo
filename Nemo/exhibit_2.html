@@ -48,9 +48,6 @@
     <!-- AFrame Components -->
     <script>
       window.localStorage["nemo_state"] = "Exhibit2";
-      //sessionStorage.clear();
-      //sessionStorage.setItem("destination", "./exhibit_3.html");
-      //sessionStorage.setItem("saved", "false");
 
       // State Machine
       AFRAME.registerState({
@@ -94,10 +91,8 @@
 
           task1: (state) => {
             state.task1 = true;
-            if (state.task1 && state.task2 && state.task3) {
-              state.showChallenge = true;
-              //AFRAME.scenes[0].emit("showChallenge", null, false);
-            }
+            state.backBtn = true;
+            state.mainUI = false;
 
             document.querySelector("#container").emit("scaleDown", null, false);
 
@@ -114,24 +109,21 @@
                             .querySelector("#backBtn")
                             .emit("scaleUp", null, false); */
             }, 400);
-
-            state.backBtn = true;
-            state.mainUI = false;
           },
 
           task2: (state) => {
             state.task2 = true;
             if (state.task1 && state.task2 && state.task3) {
-              state.showChallenge = true;
-              //AFRAME.scenes[0].emit("showChallenge", null, false);
+              //state.showChallenge = true;
+              AFRAME.scenes[0].emit("showChallenge", null, false);
             }
           },
 
           task3: (state) => {
             state.task3 = true;
             if (state.task1 && state.task2 && state.task3) {
-              state.showChallenge = true;
-              //AFRAME.scenes[0].emit("showChallenge", null, false);
+              //state.showChallenge = true;
+              AFRAME.scenes[0].emit("showChallenge", null, false);
             }
           },
 
@@ -140,7 +132,7 @@
 
             document.querySelector("#backBtn").emit("scaleDown", null, false);
 
-            let modelTracker = document.querySelector("#model-tracker");
+            var modelTracker = document.querySelector("#model-tracker");
 
             modelTracker.setAttribute("zappar-image", "enabled", false);
 
@@ -148,16 +140,17 @@
               document.querySelector("#container").emit("scaleUp", null, false);
             }, 400);
 
-            state.mainUI = true;
             state.backBtn = false;
+            state.mainUI = true;
 
             if (state.task1 && state.task2 && state.task3) {
               AFRAME.scenes[0].emit("showChallenge", null, false);
             }
           },
 
-          showChallenge: function (state) {
+          showChallenge: (state) => {
             state.showChallenge = true;
+            document.querySelector("#chlngBtn").setAttribute("raycastable", "");
           },
 
           next: (state) => {},
@@ -306,8 +299,8 @@
       <a-entity
         camera
         zappar-camera
-        cursor="rayOrigin: mouse; fuse: false;"
         raycaster="objects: [raycastable]"
+        cursor="rayOrigin: mouse; fuse: false;"
       >
         <!-- Intro Block -->
         <a-entity
@@ -428,11 +421,11 @@
           </a-entity>
 
           <a-entity
+            id="chlngBtn"
             mixin="smlCircle bgClr scaleDownAnim"
             position="0 -0.8 -4"
             scale="1 1 1"
             bind="visible: showChallenge"
-            bind-toggle__raycastable="showChallenge"
             launch-challenge="message: task4; modal: modal-4;"
           >
             <a-image
@@ -456,7 +449,7 @@
           text="font: ./assets/fonts/Cera GR Regular Italic-msdf.json; fontImage: ./assets/fonts/CeraGRRegularItalic.png; negate: false; value: Verder; color: #000000; align: center; wrapCount: 10; lineHeight: 70; width: 1;"
           position="0 -2 -5"
           scale="0 0 0"
-          visible="true"
+          bind="visible: backBtn"
           bind-toggle__raycastable="backBtn"
           launch-step="message: exit;"
         >
